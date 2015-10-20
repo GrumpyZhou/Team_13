@@ -1,0 +1,20 @@
+- DB MYSQL Tables
+- TAN generation
+- Web functionalities:
+Registration
+Login
+Logout
+View bank account details
+Transactio history 
+Money Transfer(HTML/BATCH)
+Approvement for transaction and register
+Download transaction as PDF
+
+- C program to parse the batch file
+
+Assignment for group members:
+Jonas, Daniel: class design and architecture
+Jenny: Frontend page design 
+Christophe:DB table design
+
+
