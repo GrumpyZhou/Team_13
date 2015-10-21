@@ -1,0 +1,33 @@
+CREATE TABLE users (
+        id INT NOT NULL AUTO_INCREMENT,
+        first_name TINYTEXT NOT NULL,
+	last_name TINYTEXT NOT NULL,
+	type INT NOT NULL,
+	status INT NOT NULL,
+	mail_address TINYTEXT NOT NULL,
+	password $$$$$$$$ NOT NULL,
+	PRIMARY KEY (id)
+       );
+
+CREATE TABLE accounts (
+	user_id INT NOT NULL,
+	balance DOUBLE NOT NULL,
+	PRIMARY KEY (user_id)
+	);
+
+CREATE TABLE tans (
+	user_id INT NOT NULL,
+	tan CHAR(15) NOT NULL,
+	status INT NOT NULL,
+	PRIMARY KEY (user_id)
+	);
+
+CREATE TABLE transactions (
+	id INT NOT NULL AUTO_INCREMENT,
+	sender_id INT NOT NULL,
+	receiver_id INT NOT NULL,
+	amount DOUBLE NOT NULL,
+	status INT NOT NULL,
+	PRIMARY KEY (id)
+	);
+	
