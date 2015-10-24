@@ -31,14 +31,23 @@ class MoneyTransferHandler {
 	private function checkTan()
 	{
 		$dbHandler = DatabaseHandler::getInstance();
-		$res = $dbHandler->execQuery("SELECT * FROM tans 
-			WHERE user_id='" . self::$senderId . "' 
-			AND tan='" . self::$tan . "';");
+		$query = "WHERE user_id='" . self::$senderId . "'AND tan='" . self::$tan . "';";
+		$res = $dbHandler->execQuery("SELECT * FROM tans " + $query);
 		if($res->num_rows == 0)
 		{
+			echo "Invalid TAN";
 			return FALSE;	
 		}
-		//TODO:check status of tan, update status of tan
+		//check status of tan
+		$row = $res->fetch_assoc();
+		$used = $row['used'];
+		if($used)
+		{
+			echo "TAN already used";
+			return FALSE;
+		}
+		//update status
+		$dbHandler->execQuery("UPDATE tans SET used='TRUE' " + $query);
 		
 		return TRUE;
 	}
@@ -53,14 +62,12 @@ class MoneyTransferHandler {
 		$dbHanlder->execQuery("UPDATE accounts SET balance='" . $balance . "' " + userQuery); 
 	}
 	
-	private function addHistory()
+	private function addHistory($approved)
 	{
 		$dbHandler = DatabaseHandler::getInstance();
-		//TODO: status for the transaction
-		$status = 0;
 		$dbHandler->execQuery("INSERT INTO transactions 
 			VALUES ('" . self::$senderId . "','" . self::$receiverId . "','" 
-			. self::$amount . "','" . $status . "';");
+			. self::$amount . "','" . $approved . "';");
 	}
 	
 	public function transferMoney($source, $receiver, $amount, $tan)
@@ -72,20 +79,21 @@ class MoneyTransferHandler {
 		
 		if(!checkTan)
 		{
-			echo "Invalid Tan";
 			return FALSE;
 		}
 		
+		$approved;
 		if(self::$amount > $approveLimit)
 		{
-			createRequest();	
+			$approved = FALSE;	
 		}
 		else
 		{
 			changeBalance(-self::$amount, self::$senderId);
 			changeBalance(self::$amount, self::$receiverId);
-			addHistory();
+			$approved = TRUE;
 		}
+		addHistory($approved);
 		
 		return TRUE;
 	}
