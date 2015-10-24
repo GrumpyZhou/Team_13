@@ -18,7 +18,7 @@ CREATE TABLE accounts (
 CREATE TABLE tans (
 	user_id INT NOT NULL,
 	tan CHAR(15) NOT NULL,
-	status INT NOT NULL,
+	used BOOL NOT NULL,
 	PRIMARY KEY (user_id)
 	);
 
