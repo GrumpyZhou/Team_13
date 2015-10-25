@@ -7,25 +7,25 @@ class MoneyTransferHandler {
     static private $filePath = "../transaction.txt";
     static private $uploadPath = "../Uploads/";
 
-	function __construct(){
+    function __construct(){
     }
 
-	static private function createTransferBatchFile($data)
-	{
-		$batchFile = fopen($filePath, "w") or die("Unable to open file");
-		fwrite($batchFile, $data);
-		fclose($batchFile);
-	}
+    static private function createTransferBatchFile($data)
+    {
+        $batchFile = fopen($filePath, "w") or die("Unable to open file");
+        fwrite($batchFile, $data);
+        fclose($batchFile);
+    }
 
-	static private function changeBalance($amount, $user_id)
-	{
-		$dbHandler = DatabaseHandler::getInstance();
-		$userQuery = "WHERE user_id='" . $user_id . "';";
-		$res = $dbHandler->execQuery("SELECT balance FROM accounts " + userQuery);
-		$balance = floatval($res);
-		$balance += $amount;
-		$dbHanlder->execQuery("UPDATE accounts SET balance='" . $balance . "' " + userQuery);
-	}
+    static private function changeBalance($amount, $user_id)
+    {
+        $dbHandler = DatabaseHandler::getInstance();
+        $userQuery = "WHERE user_id='" . $user_id . "';";
+        $res = $dbHandler->execQuery("SELECT balance FROM accounts " + userQuery);
+        $balance = floatval($res);
+        $balance += $amount;
+        $dbHanlder->execQuery("UPDATE accounts SET balance='" . $balance . "' " + userQuery);
+    }
 
     static public function performTransaction($id)
     {
@@ -40,20 +40,20 @@ class MoneyTransferHandler {
         changeBalance(amount, receiver);
     }
 
-	static public function transferMoney($source, $receiver, $amount, $tan)
-	{
-	    $data = "" . $source . " " . $receiver . " " . $amount . " " . $tan . "";
+    static public function transferMoney($source, $receiver, $amount, $tan)
+    {
+        $data = "" . $source . " " . $receiver . " " . $amount . " " . $tan . "";
 
         createTransferBatchFile($data);
 
         uploadBatch(intval($source));
 
-		return TRUE;
-	}
+        return TRUE;
+    }
 
-	static public function uploadBatch($senderId, $file)
+    static public function uploadBatch($senderId, $file)
     {
-	    exec("$parserPath $senderId $filePath");
-	}
+        exec("$parserPath $senderId $filePath");
+    }
 }
 ?>
