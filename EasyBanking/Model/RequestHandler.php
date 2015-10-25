@@ -4,6 +4,8 @@ include_once "MoneyTransferHandler.php";
 
 class RequestHandler {
     static private $instance = null;
+    static private $tanLength = 15;
+    static private $tanCount = 100;
 
     static public function getInstance() {
         if (null === self::$instance) {
@@ -13,6 +15,24 @@ class RequestHandler {
     }
 
     private function __construct(){}
+
+    private function createTans($id)
+    {
+        $dbHandler = DatabaseHandler::getInstance();
+        $characters = "!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+        $tans = array();
+        for($iTan = 0; $iTan < $tanCount; $iTan++)
+        {
+            $tans[$iTan] = "";
+            for($i = 0; $i < $tanLength; $i++)
+            {
+                $tans[$iTan] .= $characters[mt_rand(0, strlen($characters)-1)];
+            }
+            //TODO check for unqiueness
+            $dbHandler->execQuery("INSERT INTO tans VALUES ('" . $id . "','" . $tans[$iTan] . "','FALSE');");
+        }
+        return $tans;
+    }
 
     public function getOpenRequests()
     {
@@ -38,6 +58,11 @@ class RequestHandler {
         if($transaction)
         {
             MoneyTansferHandler::performTransaction($id);
+        }
+        else
+        {
+            createTans($id);
+            //TODO send email
         }
     }
 
