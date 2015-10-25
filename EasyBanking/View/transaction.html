@@ -38,27 +38,42 @@
         <h1>Welcome Mrs.Zhou!</h1>
     </div>
     <div class="widw">
-        <div class="titbg"><span>Transfer Money</span></div>
+        <div class="titbg"><span>Single Transaction</span></div>
     <form class="transfer" action="./account.html">
         <ul>
             <li><label>IBAN</label><br>
                 <input type="text" name="iban"/></li>
             <li><label>Amount</label><br>
-
                 <input type="text" name="amount"/>
             </li>
-            <li><label>TAN</label><br>
-
-                <input type="text" name="tan"/></li>
+            <li><label>TAN ID</label><br>
+                <input type="text" name="tid"/></li>
             <li>
-                <label><b>Or</b> upload your TAN batch file</label><br>
-                <!-- see class fileToUpload usage in php in http://www.w3schools.com/php/php_file_upload.asp  -->
-                <input class="fileToUpload" type="file" name="batch">
+            <li><label>TAN</label><br>
+                <input type="text" name="tan"/></li>
 
-            </li>
         </ul>
         <input class="barbtn" type="submit" value="Submit"/>
     </form>
+
+    </div>
+
+
+    <div class="widw">
+        <div class="titbg"><span>Multiple Transaction</span></div>
+        <form class="transfer" action="./account.html">
+            <ul>
+               <li><label>TAN</label><br>
+                    <input type="text" name="tan"/></li>
+                <li>
+                    <label><b>Or</b> upload your TAN batch file</label><br>
+                    <!-- see class fileToUpload usage in php in http://www.w3schools.com/php/php_file_upload.asp  -->
+                    <input class="fileToUpload" type="file" name="batch">
+
+                </li>
+            </ul>
+            <input class="barbtn" type="submit" value="Submit"/>
+        </form>
 
     </div>
 </div>

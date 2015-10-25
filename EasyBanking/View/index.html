@@ -15,12 +15,15 @@
     <div class="logo">EasyBanking</div>
     <div class="login">
         <form action="./account.html">
-            <label>Email/IBAN</label>
+            <label>Email</label>
             <input type="text" name="email"/>
 
             <label>Password</label>
             <input type="text" name="password"/>
             <input type="submit" class="barbtn" value="Log In"/>
+        </form>
+        <form action="./administration.html">
+            <input type="submit" class="barbtn" value="(Adm)LogIn"/>
         </form>
     </div>
 </div>
@@ -57,17 +60,13 @@
 
                 </tr>
                 <tr>
-                    <td>IBAN</td>
                     <td>Are you an employee?</td>
-                </tr>
-                <tr>
-                    <td><input type="text" name="email"/>
-                    </td>
                     <td id="checkbox"><input type="checkbox" name="yes"/><label>Yes</label><input type="checkbox"
                                                                                                   name="no"/><label>No</label>
                     </td>
                 </tr>
 
+<tr>
                     <td  colspan="2"><input class="barbtn" type="submit" value="Register"/></td>
                 </tr>
 

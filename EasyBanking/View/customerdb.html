@@ -11,7 +11,7 @@
 <div class="topbar">
     <div class="logo">EasyBanking</div>
     <div id="logout">
-        <label>Mrs.Zhou</label>
+        <label>Employee Zhou</label>
 
         <form action="./index.html">
             <input type="submit" class="barbtn" value="Log Out"/>
@@ -23,8 +23,8 @@
     <div class="mainmenu">
 
         <ul>
-            <li><a href="./account.html">Personal Bank Account</a></li>
-            <li><a href="./transaction.html">Online Transaction</a></li>
+            <li><a href="./administration.html">Request Administration</a></li>
+            <li><a href="./customerdb.html">Customer DB</a></li>
         </ul>
     </div>
 </div>
@@ -32,45 +32,17 @@
 <div class="mainpart">
 
     <div class="banner">
-        <h1>Welcome Mrs.Zhou!</h1>
+        <h1>Customer Search Engine</h1>
     </div>
-
-    <div class="accinfo">
-        <div class="widw">
-            <div class="titbg"><span>Bank Account Overview</span></div>
-            <table>
-
-                <tr>
-                    <td>First Name:</td>
-                    <td>Zhou</td>
-                </tr>
-                <tr>
-                    <td>Last Name:</td>
-                    <td>Qunjie</td>
-                </tr>
-                <tr>
-                    <td>IBAN:</td>
-                    <td>xxxx xxxx</td>
-                </tr>
-                <tr>
-                    <td>Balance:</td>
-                    <td>22222222222</td>
-                </tr>
-                <tr>
-                    <td>Email:</td>
-                    <td>222@gmail.com</td>
-                </tr>
-
-            </table>
-
-        </div>
+<div class="search">
+<form>
+    <input type="text" name="email" placeholder="IBAN"/>
+    <input class="barbtn" type="submit" value="Search">
+</form>
     </div>
-    <br>
-
-
     <div class="transhis">
         <div class="widw">
-            <div class="titbg"><span>Transaction History</span></div>
+            <div class="titbg"><span>Account & Transaction Information</span></div>
     <pre>
         <span>Zhou Qunjie</span>
         IBAN: <span>xxxx xxxx</span>
