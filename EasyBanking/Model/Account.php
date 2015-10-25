@@ -53,7 +53,7 @@ abstract class Account {
         if($isEmployee) {
             $query .= "TRUE, FALSE, ";
         } else {
-            $query .= "FALSE, TRUE, ";
+            $query .= "FALSE, FALSE, ";
         }
         $query .= "'" . $email . "', ";
         $query .= "'" . calculateHash($password) . "');";
@@ -80,8 +80,6 @@ abstract class Account {
             echo "ERROR: Account entry for new user couldn't be created!\n";
             return FALSE;
         }
-
-        //TODO: Create TAN list, store it in the DB and mail it to the user
 
         return TRUE;
     }
