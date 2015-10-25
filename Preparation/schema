@@ -1,13 +1,13 @@
 CREATE TABLE users (
-        id INT NOT NULL AUTO_INCREMENT,
-        first_name TINYTEXT NOT NULL,
+	id INT NOT NULL AUTO_INCREMENT,
+	first_name TINYTEXT NOT NULL,
 	last_name TINYTEXT NOT NULL,
-	type INT NOT NULL,
+	isEmployee BOOL NOT NULL,
 	approved BOOL NOT NULL,
 	mail_address TINYTEXT NOT NULL,
 	password $$$$$$$$ NOT NULL,
 	PRIMARY KEY (id)
-       );
+	);
 
 CREATE TABLE accounts (
 	user_id INT NOT NULL,
@@ -30,4 +30,4 @@ CREATE TABLE transactions (
 	approved BOOL NOT NULL,
 	PRIMARY KEY (id)
 	);
-	
+
