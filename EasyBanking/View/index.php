@@ -19,7 +19,7 @@
             <label>Password</label><input type="text" name="password" required/>
             <input type="submit" class="barbtn" value="Log In"/>
         </form>
-        <form action="./administration.html">
+        <form action="toBeDeleted/administration.html">
             <input type="submit" class="barbtn" value="(Adm)LogIn"/>
         </form>
     </div>

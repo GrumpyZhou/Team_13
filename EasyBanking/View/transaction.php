@@ -30,7 +30,7 @@ $lastname = "Zhou";//$user->getLastName();
     <div id="logout">
         <label><? echo $firstname . " " . $lastname ?></label>
 
-        <form action="./index.html">
+        <form action="../Controller/LogoutCtrl.php" method="post">
             <input type="submit" class="barbtn" value="Log Out"/>
         </form>
     </div>
@@ -41,8 +41,8 @@ $lastname = "Zhou";//$user->getLastName();
     <div class="mainmenu">
 
         <ul>
-            <li><a href="./account.html">Personal Bank Account</a></li>
-            <li><a href="./transaction.html">Online Transaction</a></li>
+            <li><a href="toBeDeleted/account.html">Personal Bank Account</a></li>
+            <li><a href="toBeDeleted/transaction.html">Online Transaction</a></li>
         </ul>
     </div>
 </div>

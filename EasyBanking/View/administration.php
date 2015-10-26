@@ -38,7 +38,7 @@ $lastname = "Zhou";//$user->getLastName();
     <div class="menubar">
         <div class="mainmenu">
             <ul>
-                <li><a href="./administration.html">Request Administration</a></li>
+                <li><a href="toBeDeleted/administration.html">Request Administration</a></li>
                 <li><a href="./customerdb.html">Customer DB</a></li>
             </ul>
         </div>

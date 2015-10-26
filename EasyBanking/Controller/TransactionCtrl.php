@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 if (isset($_POST['type'])) {
     $type = $_POST['type'];
@@ -24,4 +23,4 @@ if (isset($_POST['type'])) {
 }
 
 //after the transaction goes back to the account page
-header("Location:../View/account.html");
+header("Location:../View/account.php");

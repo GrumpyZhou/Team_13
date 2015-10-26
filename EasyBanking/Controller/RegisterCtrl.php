@@ -16,3 +16,5 @@ echo $email." ".$firstName." ".$lastName." ".$password." ".$isEmployee; //testin
 // register($email,$firstName,$lastName,$password,$isEmployee);
 
 
+//return the front page
+header("Location:../View/index.php");
