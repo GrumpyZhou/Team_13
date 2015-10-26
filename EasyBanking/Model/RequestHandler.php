@@ -19,7 +19,7 @@ class RequestHandler {
     private function createTans($id)
     {
         $dbHandler = DatabaseHandler::getInstance();
-        $characters = "!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+        $characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         $tans = array();
         for($iTan = 0; $iTan < $tanCount; $iTan++)
         {
