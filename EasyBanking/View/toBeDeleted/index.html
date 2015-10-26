@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <script type="text/javascript"
+            src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    <title>EasyBanking-Welcome</title>
+
+<body>
+
+
+<div class="topbar">
+    <div class="logo">EasyBanking</div>
+    <div class="login">
+        <form action="account.html">
+            <label>Email</label>
+            <input type="text" name="email"/>
+
+            <label>Password</label>
+            <input type="text" name="password"/>
+            <input type="submit" class="barbtn" value="Log In"/>
+        </form>
+        <form action="administration.html">
+            <input type="submit" class="barbtn" value="(Adm)LogIn"/>
+        </form>
+    </div>
+</div>
+<div class="clear"/>
+<div class="mainpart">
+    <div class="banner"><h1>Manage your bank account with EasyBanking!</h1>
+        <span>Convenient access, Easy operation, Clean layout </span>
+    </div>
+    <div class="descript">No Accout Yet? Register Now!</div>
+
+    <div class="widw">
+        <div class="titbg"><span>Transfer Money</span></div>
+
+        <form class="register">
+            <table>
+                <tr class="tt">
+                    <td>First Name</td>
+                    <td>Last Name</td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="fname" required/>
+                    </td>
+                    <td><input type="text" name="lname" required/>
+                    </td>
+                <tr>
+                    <td>Email Address</td>
+                    <td>Password</td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="email" required/>
+                    </td>
+                    <td><input type="password" name="password" required/>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Are you an employee?</td>
+                    <td id="checkbox"><input type="checkbox" name="yes"/><label>Yes</label><input type="checkbox"
+                                                                                                  name="no"/><label>No</label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2"><input class="barbtn" type="submit" value="Register"/></td>
+                </tr>
+
+
+            </table>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>
+
+<script>
+
+
+    function formValidator(form) {
+        if (form.equals("register")) {
+            checkEmail(document.forms["register"]["email"].value
+            );
+            isChecked();
+        }
+
+    }
+    function checkEmail(email) {
+        var regex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        return regex.test(email);
+    }
+
+    function isChecked() {
+
+        var result;
+        if (document.getElementByName("yes").checked || document.getElementByName("no").checked) {
+            result = true;
+        } else {
+            document.getElementByName("yes").css('box-shadow').val('0px 1px 5px red');
+            document.getElementByName("no").css('box-shadow').val('0px 1px 5px red');
+            result = false;
+        }
+        return result;
+    }
+
+
+    //box-shadow: 0px 1px 5px red);
+</script>
