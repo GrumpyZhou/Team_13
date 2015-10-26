@@ -8,9 +8,9 @@ abstract class Account {
 
     // If login is successfull, an instance of class Customer or Employee is returned.
     // Otherwise, the NULL reference is returned.
-    public function login($userID, $password) {
+    public function login($email, $password) {
         $dbHandler = DatabaseHandler::getInstance();
-        $res = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $userID . "';");
+        $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         $row = $res->fetch_assoc();
         if($row == NULL) {
             echo self::loginErrorMsg;
