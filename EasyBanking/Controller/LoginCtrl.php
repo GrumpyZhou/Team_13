@@ -2,9 +2,9 @@
 session_start();
 require_once('../Model/Account.php');
 
-if (!isset($_SESSION['authenticated'])) {
-    $_SESSION['isAuthenticated'] = false;   // to mark whether the  user  has been authenticated
-}
+//if (!isset($_SESSION['authenticated'])) {
+//    $_SESSION['isAuthenticated'] = false;   
+//}
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
     $email = $_POST['email'];
