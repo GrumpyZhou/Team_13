@@ -15,21 +15,21 @@ class DatabaseHandler {
     private function __construct(){}
 
     private function connectToDB() {
-        $connected = FALSE;
+        $this->connected = FALSE;
         $this->mysqlConnection = new mysqli("127.0.0.1", "root", "samurai", "bank", 3306);
-        if($mysqlConnection->connect_errno) {
-            echo "Couldn't connect to DB: " . $mysqlConnection->connect_error;
+        if($this->mysqlConnection->connect_errno) {
+            echo "Couldn't connect to DB: " . $this->mysqlConnection->connect_error;
             return FALSE;
         }
-        $connected = TRUE;
+        $this->connected = TRUE;
         return TRUE;
     }
 
     public function execQuery($query) {
-        if($connected == FALSE && connectToDB() == FALSE) {
+        if($this->connected == FALSE && $this->connectToDB() == FALSE) {
             return;
         }
-        $result = $mysqlConnection->query($query);
+        $result = $this->mysqlConnection->query($query);
         return $result;
     }
 }

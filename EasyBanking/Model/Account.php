@@ -1,5 +1,7 @@
 <?php
 include_once "DatabaseHandler.php";
+include_once "Customer.php";
+include_once "Employee.php";
 abstract class Account {
     protected $firstName;
     protected $lastName;
@@ -8,7 +10,7 @@ abstract class Account {
 
     // If login is successfull, an instance of class Customer or Employee is returned.
     // Otherwise, the NULL reference is returned.
-    public function login($email, $password) {
+    public static function login($email, $password) {
         $dbHandler = DatabaseHandler::getInstance();
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         $row = $res->fetch_assoc();
@@ -25,7 +27,7 @@ abstract class Account {
             return NULL;
         }
 
-        if($storedPW != calculateHash($password)) {
+        if($storedPW != self::calculateHash($password)) {
             echo self::loginErrorMsg;
             return NULL;
         }
@@ -40,7 +42,7 @@ abstract class Account {
     //abstract public function logout(); //TODO: Validate whether this method is necessary
 
     // Returns a BOOL indicating wheter the registration was successfull (TRUE) or not (FALSE)
-    public function register($email, $firstName, $lastName, $password, $isEmployee) {
+    public static function register($email, $firstName, $lastName, $password, $isEmployee) {
         $dbHandler = DatabaseHandler::getInstance();
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         if($res->fetch_assoc() != NULL) {
@@ -49,14 +51,14 @@ abstract class Account {
         }
 
         $query = "INSERT INTO users (first_name, last_name, isEmployee, approved, mail_address, password)";
-        $query .= " VALUES ('" . $firstname . "', '" . $lastName . "', ";
+        $query .= " VALUES ('" . $firstName . "', '" . $lastName . "', ";
         if($isEmployee) {
             $query .= "TRUE, FALSE, ";
         } else {
             $query .= "FALSE, FALSE, ";
         }
         $query .= "'" . $email . "', ";
-        $query .= "'" . calculateHash($password) . "');";
+        $query .= "'" . self::calculateHash($password) . "');";
 
         $rc = $dbHandler->execQuery($query);
         if($rc != TRUE) {
@@ -84,7 +86,8 @@ abstract class Account {
         return TRUE;
     }
 
-    private function calculateHash($input) {
+    private static function calculateHash($input) {
+	echo "HASH: " . hash("sha256", $input, FALSE) . "\n";
         return hash("sha256", $input, FALSE);
     }
 }
