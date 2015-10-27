@@ -8,8 +8,8 @@
 #define TAN_SIZE 16
 #define MYSQL_SERVER_ADDRESS "localhost"
 #define MYSQL_USER "root"
-#define MYSQL_PW "pw"
-#define MYSQL_DB "db"
+#define MYSQL_PW "samurai"
+#define MYSQL_DB "bank"
 
 void usage(char **argv)
 {
@@ -20,7 +20,7 @@ void usage(char **argv)
 
 int main(int argc, char **argv) {
 	//Format: <recipient_id> <amount> <tan>
-	int sender_id, recipient_id, first_space_location = 0, second_space_location = 0;
+	int sender_id, receiver_id, first_space_location = 0, second_space_location = 0;
 	double amount;
 	char tan[TAN_SIZE];
 	FILE *batch_file;
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 
 	while(fgets(line_buffer, sizeof(line_buffer), batch_file) != NULL)
 	{
-		recipient_id = atoi(line_buffer);
+		receiver_id = atoi(line_buffer);
 
 		for(first_space_location = 0; first_space_location < BUFFER_SIZE && line_buffer[first_space_location] != ' '; first_space_location += 1);
 		//+1 to jump over space
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 		tan_position = line_buffer + second_space_location + 1;
 		memcpy(tan, tan_position, 15);
 		tan[15] = '\0';
-		printf("Current line: %d - %f - %s\n", recipient_id, amount, tan);
+		printf("Current line: %d - %f - %s\n", receiver_id, amount, tan);
 
 		//1. recipient exists? 2. tan valid? 3. confirmation required? 4. add transaction 5. if no confirmation: change balances
 		 MYSQL *conn;
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 			 exit(EXIT_FAILURE);
 		 }
 
-		 sprintf(sql_command, "SELECT * FROM users WHERE id = %d", recipient_id);
+		 sprintf(sql_command, "SELECT * FROM users WHERE id = %d", receiver_id);
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 		 }
 		 mysql_free_result(res);
 
-		 sprintf(sql_command, "SELECT * FROM users WHERE id = %d AND balance > %d", sender_id, amount);
+		 sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = %d AND balance > %f", sender_id, amount);
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
@@ -122,22 +122,19 @@ int main(int argc, char **argv) {
 			 exit(1);
 		 }
 
-		 mysql_free_result(res);
-
 		 if (amount < 10000)
 		 {
-			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved) VALUES ('%d', '%d', '%f', '1')", sender_id, recipient_id, amount);
+			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved) VALUES ('%d', '%d', '%f', '1')", sender_id, receiver_id, amount);
 		 }
 		 else
 		 {
-			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved) VALUES ('%d', '%d', '%f', '0')", sender_id, recipient_id, amount);
+			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved) VALUES ('%d', '%d', '%f', '0')", sender_id, receiver_id, amount);
 		 }
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
 		 }
 
-		 mysql_free_result(res);
 
 		 if(amount < 10000)
 		 {
@@ -147,15 +144,13 @@ int main(int argc, char **argv) {
 				 exit(1);
 			 }
 
-			 mysql_free_result(res);
 
-			 sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = %d", amount, recipient_id);
+			 sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = %d", amount, receiver_id);
 			 if (mysql_query(conn, sql_command)) {
 				 fprintf(stderr, "%s\n", mysql_error(conn));
 				 exit(1);
 			 }
 
-			 mysql_free_result(res);
 		 }
 
 		 mysql_close(conn);
