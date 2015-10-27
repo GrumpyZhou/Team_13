@@ -18,8 +18,9 @@ CREATE TABLE accounts (
 CREATE TABLE tans (
 	user_id INT NOT NULL,
 	tan CHAR(15) NOT NULL,
+	tan_id INT NOT NULL,
 	used BOOL NOT NULL,
-	PRIMARY KEY (user_id)
+	PRIMARY KEY (user_id, tan_id)
 	);
 
 CREATE TABLE transactions (
