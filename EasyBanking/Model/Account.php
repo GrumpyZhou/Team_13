@@ -21,12 +21,12 @@ abstract class Account {
         $employeeAccount = $row['isEmployee'];
         $accountApproved = $row['approved'];
 
-        if($accountApproved == FALSE) {
-            return "ERROR: Account not approved yet!\n";
-        }
-
         if($storedPW != self::calculateHash($password)) {
             return self::loginErrorMsg;
+        }
+
+        if($accountApproved == FALSE) {
+            return "ERROR: Account not approved yet!\n";
         }
 
         if($employeeAccount == TRUE) {
