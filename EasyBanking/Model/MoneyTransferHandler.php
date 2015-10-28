@@ -4,17 +4,23 @@ include_once "DatabaseHandler.php";
 
 class MoneyTransferHandler {
     static private $parserPath = "../Parser/";
-    static private $filePath = "../transaction.txt";
-    static private $uploadPath = "../Uploads/";
+    static private $uploadPath = "../uploads/";
 
     function __construct(){
     }
 
-    static private function createTransferBatchFile($data)
+    static private function createTransferBatchFile($fileName, $tanData, $transData)
     {
-        $batchFile = fopen($filePath, "w") or die("Unable to open file");
-        fwrite($batchFile, $data);
+        $batchFile = fopen(fileName, "w");
+        if($batchFile == FALSE)
+        {
+            echo "Error: Failed creating batch file!\n";
+            return FALSE;
+        }
+        fwrite($batchFile, $tanData);
+        fwrite($batchFile, $transData);
         fclose($batchFile);
+        return TRUE;
     }
 
     static private function changeBalance($amount, $user_id)
@@ -25,6 +31,11 @@ class MoneyTransferHandler {
         $balance = floatval($res);
         $balance += $amount;
         $dbHanlder->execQuery("UPDATE accounts SET balance='" . $balance . "' " + userQuery);
+    }
+
+    static private function parseBatchFile($senderId, $filePath)
+    {
+        exec("self::$parserPath $senderId $filePath");
     }
 
     static public function performTransaction($id)
@@ -40,20 +51,35 @@ class MoneyTransferHandler {
         changeBalance(amount, receiver);
     }
 
-    static public function transferMoney($source, $receiver, $amount, $tan)
+    static public function transferMoney($source, $receiver, $amount, $tan, $tanId)
     {
-        $data = "" . $source . " " . $receiver . " " . $amount . " " . $tan . "";
+        $tanData = $tanId . " " . $tan . "\n";
+        $transData = $receiver . " " . $amount . "\n";
 
-        createTransferBatchFile($data);
-
-        uploadBatch(intval($source));
+        //create batch file
+        $fileName = self::uploadPath . $source;
+        if(!createTransferBatchFile($fileName, $tanData, $transData))
+        {
+            return FALSE;
+        }
+        parseBatchFile(intval($source), $fileName);
 
         return TRUE;
     }
 
-    static public function uploadBatch($senderId, $file)
+    static public function uploadBatch($senderId)
     {
-        exec("$parserPath $senderId $filePath");
+        $targetDir = $uploadPath . $senderId;
+        //TODO check if file is correct
+        $uploadOK = 1;
+
+        if(!move_uploaded_file($_FILES["batchfile"]["name"], $targetDir))
+        {
+            echo "Error: Uploading batch file!\n";
+            return NULL;
+        }
+
+        parseBatchFile($senderId, $targetDir);
     }
 }
 ?>
