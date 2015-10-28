@@ -16,10 +16,11 @@ CREATE TABLE accounts (
 	);
 
 CREATE TABLE tans (
+	tan_id INT NOT NULL AUTO_INCREMENT,
 	user_id INT NOT NULL,
 	tan CHAR(15) NOT NULL,
 	used BOOL NOT NULL,
-	PRIMARY KEY (user_id)
+	PRIMARY KEY (tan_id)
 	);
 
 CREATE TABLE transactions (
