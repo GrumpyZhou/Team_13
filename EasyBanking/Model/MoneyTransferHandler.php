@@ -5,16 +5,22 @@ include_once "DatabaseHandler.php";
 class MoneyTransferHandler {
     static private $parserPath = "../Parser/";
     static private $uploadPath = "../uploads/";
-    static private $fileName = "../uploads/temp.txt";
 
     function __construct(){
     }
 
-    static private function createTransferBatchFile($data)
+    static private function createTransferBatchFile($fileName, $tanData, $transData)
     {
-        $batchFile = fopen($filePath, "w") or die("Unable to open file");
-        fwrite($batchFile, $data);
+        $batchFile = fopen(fileName, "w");
+        if($batchFile == FALSE)
+        {
+            echo "Error: Failed creating batch file!\n";
+            return FALSE;
+        }
+        fwrite($batchFile, $tanData);
+        fwrite($batchFile, $transData);
         fclose($batchFile);
+        return TRUE;
     }
 
     static private function changeBalance($amount, $user_id)
@@ -45,13 +51,18 @@ class MoneyTransferHandler {
         changeBalance(amount, receiver);
     }
 
-    static public function transferMoney($source, $receiver, $amount, $tan)
+    static public function transferMoney($source, $receiver, $amount, $tan, $tanId)
     {
-        $data = "" . $source . " " . $receiver . " " . $amount . " " . $tan . "";
+        $tanData = $tanId . " " . $tan . "\n";
+        $transData = $receiver . " " . $amount . "\n";
 
-        createTransferBatchFile($data);
-
-        parseBatchFile(intval($source), self::$fileName);
+        //create batch file
+        $fileName = self::uploadPath . $source;
+        if(!createTransferBatchFile($fileName, $tanData, $transData))
+        {
+            return FALSE;
+        }
+        parseBatchFile(intval($source), $fileName);
 
         return TRUE;
     }
