@@ -3,9 +3,9 @@ include_once "DatabaseHandler.php";
 include_once "Customer.php";
 include_once "Employee.php";
 abstract class Account {
-    protected $firstName;
-    protected $lastName;
-    protected $email;
+    public $firstName;
+    public $lastName;
+    public $email;
     const loginErrorMsg = "ERROR: Wrong password or Account doesn't exist!\n";
 
     // If login is successfull, an instance of class Customer or Employee is returned.
@@ -32,7 +32,7 @@ abstract class Account {
         if($employeeAccount == TRUE) {
             return new Employee($row['first_name'], $row['last_name'], $row['mail_address']);
         } else {
-            return new Customer($row['first_name'], $row['last_name'], $row['mail_address']);
+            return new Customer($row['first_name'], $row['last_name'], $row['mail_address'], $row['id']);
         }
     }
 

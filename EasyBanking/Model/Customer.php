@@ -1,9 +1,13 @@
 <?php
+include_once "Account.php";
 class Customer extends Account {
-    function __construct($firstName, $lastName, $email) {
-        $this->$firstName = $firstName;
-        $this->$lastName = $lastName;
-        $this->$email = $email;
+    public $IBAN;
+
+    function __construct($firstName, $lastName, $email, $IBAN) {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->email = $email;
+        $this->IBAN = $IBAN;
     }
 }
 ?>
