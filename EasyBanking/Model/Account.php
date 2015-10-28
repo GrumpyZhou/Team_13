@@ -15,21 +15,18 @@ abstract class Account {
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         $row = $res->fetch_assoc();
         if($row == NULL) {
-            echo self::loginErrorMsg;
-            return NULL;
+            return self::loginErrorMsg;
         }
         $storedPW = $row['password'];
         $employeeAccount = $row['isEmployee'];
         $accountApproved = $row['approved'];
 
         if($accountApproved == FALSE) {
-            echo "ERROR: Account not approved yet!\n";
-            return NULL;
+            return "ERROR: Account not approved yet!\n";
         }
 
         if($storedPW != self::calculateHash($password)) {
-            echo self::loginErrorMsg;
-            return NULL;
+            return self::loginErrorMsg;
         }
 
         if($employeeAccount == TRUE) {
@@ -41,13 +38,13 @@ abstract class Account {
 
     //abstract public function logout(); //TODO: Validate whether this method is necessary
 
-    // Returns a BOOL indicating wheter the registration was successfull (TRUE) or not (FALSE)
+    // Returns TRUE if the registration was successfull
+    // Otherwise returns a String containing an error message
     public static function register($email, $firstName, $lastName, $password, $isEmployee) {
         $dbHandler = DatabaseHandler::getInstance();
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         if($res->fetch_assoc() != NULL) {
-            echo "ERROR: An account with that email has already been created!\n";
-            return FALSE;
+            return "ERROR: An account with that email has already been created!\n";
         }
 
         $query = "INSERT INTO users (first_name, last_name, isEmployee, approved, mail_address, password)";
@@ -62,8 +59,7 @@ abstract class Account {
 
         $rc = $dbHandler->execQuery($query);
         if($rc != TRUE) {
-            echo "ERROR: New User couldn't be stored in Database!\n";
-            return FALSE;
+            return "ERROR: New User couldn't be stored in Database!\n";
         }
         // If the new Account is for an employee, we are already done here.
         if($isEmployee) {
@@ -79,15 +75,13 @@ abstract class Account {
         // Add new account for the customer
         $query = "INSERT INTO accounts VALUES (" . $userID . ", 0);";
         if($dbHandler->execQuery($query) != TRUE) {
-            echo "ERROR: Account entry for new user couldn't be created!\n";
-            return FALSE;
+            return "ERROR: Account entry for new user couldn't be created!\n";
         }
 
         return TRUE;
     }
 
     private static function calculateHash($input) {
-	echo "HASH: " . hash("sha256", $input, FALSE) . "\n";
         return hash("sha256", $input, FALSE);
     }
 }
