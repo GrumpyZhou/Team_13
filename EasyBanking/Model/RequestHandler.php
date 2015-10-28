@@ -46,7 +46,7 @@ class RequestHandler {
         for($i = 0; $i < self::$tanLength; $i++) {
             $mailText .= $i . ": " . $tans[$i] . "\n";
         }
-        mail($email, "Your personal TAN numbers", $mailText);
+        mail($email, "Your personal TAN numbers", $mailText, "From: EasyBanking");
     }
 
     public function approveRequest($id, $transaction)
