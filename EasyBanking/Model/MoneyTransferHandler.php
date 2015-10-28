@@ -4,8 +4,8 @@ include_once "DatabaseHandler.php";
 
 class MoneyTransferHandler {
     static private $parserPath = "../Parser/";
-    static private $filePath = "../transaction.txt";
-    static private $uploadPath = "../Uploads/";
+    static private $uploadPath = "../uploads/";
+    static private $fileName = "../uploads/temp.txt";
 
     function __construct(){
     }
@@ -27,6 +27,11 @@ class MoneyTransferHandler {
         $dbHanlder->execQuery("UPDATE accounts SET balance='" . $balance . "' " + userQuery);
     }
 
+    static private function parseBatchFile($senderId, $filePath)
+    {
+        exec("self::$parserPath $senderId $filePath");
+    }
+
     static public function performTransaction($id)
     {
         $dbHandler = DatabaseHandler::getInstance();
@@ -46,14 +51,24 @@ class MoneyTransferHandler {
 
         createTransferBatchFile($data);
 
-        uploadBatch(intval($source));
+        parseBatchFile(intval($source), self::$fileName);
 
         return TRUE;
     }
 
-    static public function uploadBatch($senderId, $file)
+    static public function uploadBatch($senderId)
     {
-        exec("$parserPath $senderId $filePath");
+        $targetDir = $uploadPath . $senderId;
+        //TODO check if file is correct
+        $uploadOK = 1;
+
+        if(!move_uploaded_file($_FILES["batchfile"]["name"], $targetDir))
+        {
+            echo "Error: Uploading batch file!\n";
+            return NULL;
+        }
+
+        parseBatchFile($senderId, $targetDir);
     }
 }
 ?>
