@@ -56,7 +56,15 @@ class RequestHandler {
         {
             $table = "transactions";
         }
-        //TODO check if already approved
+
+        //check if already approved
+        $dbHandler = DatabaseHandler::getInstance();
+        $aprroved = $dbHandler->execQuery("SELECT approved FROM " . $table . " WHERE id='" . $id . "';");
+        if($approved)
+        {
+            echo "ERROR: Already approved!\n";
+            return NULL;
+        }
 
         //change the value
         $dbHandler = DatabaseHandler::getInstance();
@@ -79,7 +87,14 @@ class RequestHandler {
 
     public function denyRequest($id, $transaction)
     {
-        //TODO: delete the request ?
+        $table = "users";
+        if($transaction)
+        {
+            $table = "transactions";
+        }
+
+        $dbHandler = DatabaseHandler::getInstance();
+        $dbHandler->execQuery("DELETE FROM " . $table . " WHERE id='" . $id . "';");
     }
 }
 ?>
