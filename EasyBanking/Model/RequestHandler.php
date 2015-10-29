@@ -34,11 +34,39 @@ class RequestHandler {
         return $tans;
     }
 
-    public function getOpenRequests()
+    public function getOpenRequests($accounts)
     {
         $dbHandler = DatabaseHandler::getInstance();
-        $pendingAccounts = $dbHandler->execQuery("SELECT * FROM users WHERE approved='FALSE';");
-        $pendingTransfers = $dbHandler->execQuery("SELECT * FROM transactions WHERE approved='FALSE';");
+        $table = "transactions";
+        if($accounts)
+        {
+            $table = "users";
+        }
+
+        $pending = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE approved='FALSE';");
+        if($accounts)
+        {
+            while($row = $pending->fetch_assoc())
+            {
+                echo "<tr>";
+                //TODO add registration date to database
+                echo "<td>20.01.2015</td>";
+                echo "<td>" . $row['mail_address'] . "</td>";
+                echo "</tr>";
+            }
+        }
+        else
+        {
+            while($row = $pending->fetch_assoc())
+            {
+                echo "<tr>";
+                //TODO add transaction date to database
+                echo "<td>20.01.2015</td>";
+                echo "<td>" . $row['sender_id'] . "</td>";
+                echo "<td>" . $row['amount'] . "</td>";
+                echo "</tr>";
+            }
+        }
     }
 
     private function mailTans($tans, $email) {
