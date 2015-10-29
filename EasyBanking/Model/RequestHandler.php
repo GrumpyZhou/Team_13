@@ -2,6 +2,30 @@
 include_once "DatabaseHandler.php";
 include_once "MoneyTransferHandler.php";
 
+class TransactionRequest
+{
+    public $date;
+    public $senderId;
+    public $amount;
+    function __construct($date, $sender, $amount)
+    {
+        $this->date = $date;
+        $this->senderId = $sender;
+        $this->amount = $amount;
+    }
+}
+
+class AccountRequest
+{
+    public $date;
+    public $mail;
+    function __construct($date, $mail)
+    {
+        $this->date = $date;
+        $this->mail = $mail;
+    }
+}
+
 class RequestHandler {
     static private $instance = null;
     static private $tanLength = 15;
@@ -44,27 +68,23 @@ class RequestHandler {
         }
 
         $pending = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE approved='FALSE';");
+        $dataArray = array();
         if($accounts)
         {
             while($row = $pending->fetch_assoc())
             {
-                echo "<tr>";
-                echo "<td>" . $row['registration_date'] . "</td>";
-                echo "<td>" . $row['mail_address'] . "</td>";
-                echo "</tr>";
+                $dataArray[] = new AccountRequest($row['registration_date'], $row['mail_address']);
             }
         }
         else
         {
             while($row = $pending->fetch_assoc())
             {
-                echo "<tr>";
-                echo "<td>" . $row['transaction_date'] . "</td>";
-                echo "<td>" . $row['sender_id'] . "</td>";
-                echo "<td>" . $row['amount'] . "</td>";
-                echo "</tr>";
+                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount']);
             }
         }
+
+        return $dataArray;
     }
 
     private function mailTans($tans, $email) {
