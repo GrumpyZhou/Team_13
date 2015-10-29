@@ -6,6 +6,7 @@ CREATE TABLE users (
 	approved BOOL NOT NULL,
 	mail_address TINYTEXT NOT NULL,
 	password CHAR(64) NOT NULL,
+	registration_date DATE NOT NULL,
 	PRIMARY KEY (id)
 	);
 
@@ -30,6 +31,7 @@ CREATE TABLE transactions (
 	receiver_id INT NOT NULL,
 	amount DOUBLE NOT NULL,
 	approved BOOL NOT NULL,
+	transaction_date DATE NOT NULL,
 	PRIMARY KEY (id)
 	);
 

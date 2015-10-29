@@ -49,8 +49,7 @@ class RequestHandler {
             while($row = $pending->fetch_assoc())
             {
                 echo "<tr>";
-                //TODO add registration date to database
-                echo "<td>20.01.2015</td>";
+                echo "<td>" . $row['registration_date'] . "</td>";
                 echo "<td>" . $row['mail_address'] . "</td>";
                 echo "</tr>";
             }
@@ -60,8 +59,7 @@ class RequestHandler {
             while($row = $pending->fetch_assoc())
             {
                 echo "<tr>";
-                //TODO add transaction date to database
-                echo "<td>20.01.2015</td>";
+                echo "<td>" . $row['transaction_date'] . "</td>";
                 echo "<td>" . $row['sender_id'] . "</td>";
                 echo "<td>" . $row['amount'] . "</td>";
                 echo "</tr>";
