@@ -17,7 +17,7 @@ CREATE TABLE accounts (
 	);
 
 CREATE TABLE tans (
-	tan_id INT NOT NULL AUTO_INCREMENT,
+	tan_id INT NOT NULL,
 	user_id INT NOT NULL,
 	tan CHAR(15) NOT NULL,
 	used BOOL NOT NULL,
