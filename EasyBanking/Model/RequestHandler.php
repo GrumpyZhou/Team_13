@@ -58,6 +58,9 @@ class RequestHandler {
         return $tans;
     }
 
+    // $account: Boolean
+    // -> If True, the function returns pending registration requests
+    // -> If False, the function returns pending transaction requests
     public function getOpenRequests($accounts)
     {
         $dbHandler = DatabaseHandler::getInstance();
@@ -87,6 +90,8 @@ class RequestHandler {
         return $dataArray;
     }
 
+    // $tans -> Array containing the tans
+    // $email -> E-Mail address of the customer as String
     private function mailTans($tans, $email) {
         $mailText = "Hello,\nwith this E-Mail we send you your Tans,\nwhich you can use in the future to authenticate yourself,\nin order to perform money transactions:\n\n";
         for($i = 0; $i < self::$tanLength; $i++) {
@@ -95,6 +100,9 @@ class RequestHandler {
         mail($email, "Your personal TAN numbers", $mailText, "From: EasyBanking");
     }
 
+    // $transaction: Boolean
+    // -> If True, the function approves the transaction with id $id
+    // -> If False, the function approves the registration request with user-id $id
     public function approveRequest($id, $transaction)
     {
         $table = "users";
@@ -131,6 +139,9 @@ class RequestHandler {
         }
     }
 
+    // $transaction: Boolean
+    // -> If True, the function denies the transaction with id $id
+    // -> If False, the function denies the registration request for user-id $id
     public function denyRequest($id, $transaction)
     {
         $table = "users";
@@ -141,6 +152,8 @@ class RequestHandler {
 
         $dbHandler = DatabaseHandler::getInstance();
         $dbHandler->execQuery("DELETE FROM " . $table . " WHERE id='" . $id . "';");
+        //TODO: In case of denied user registration, also delete corresponding
+        //      columns in the other tables (e.g. accounts table).
     }
 }
 ?>
