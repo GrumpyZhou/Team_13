@@ -16,7 +16,7 @@
     <div class="login">
         <form action="../Controller/LoginCtrl.php" method="post">
             <label>Email</label><input type="text" name="email" required/>
-            <label>Password</label><input type="text" name="password" required/>
+            <label>Password</label><input type="password" name="password" required/>
             <input type="submit" class="barbtn" value="Log In"/>
         </form>
         <form action="toBeDeleted/administration.html">
@@ -49,7 +49,7 @@
                 </tr>
                 <tr>
                     <td><input type="text" name="email" required/></td>
-                    <td><input type="text" name="password" required/></td>
+                    <td><input type="password" name="password" required/></td>
                 </tr>
                 <tr>
                     <td>Are you an employee?</td>
