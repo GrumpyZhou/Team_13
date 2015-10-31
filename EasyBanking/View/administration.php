@@ -1,19 +1,15 @@
 <?php
 session_start();
-//require_once('../Model/Customer.php');
+require_once('../Model/RequestHandler.php');
 
-//Commented during the test...
-//
-//if (!isset($_SESSION['currentUser'])) {
-//
-//    header("Location:../View/index.php");
-//} else {
-//    $user = $_SESSION['currentUser'];
-
-$firstname = "Qunjie";//$user->getFirstName();
-$lastname = "Zhou";//$user->getLastName();
-
-
+if (!isset($_SESSION['isEmployee'])||!$_SESSION['isEmployee']) {
+   header("Location:../View/index.php");
+} else {
+	//echo "admin page";
+//can not get these fields !!
+$firstname = $_SESSION['firstname'];
+$lastname = $_SESSION['lastname'];
+echo $firstname;
 ?>
     <!DOCTYPE html>
     <html>
@@ -28,7 +24,7 @@ $lastname = "Zhou";//$user->getLastName();
     <div class="topbar">
         <div class="logo">EasyBanking</div>
         <div id="logout">
-            <label><? echo $firstname . " " . $lastname ?></label>
+            <label><? echo "????".$firstname . " " . $lastname; ?></label>
             <form action="../Controller/LogoutCtrl.php" method="post">
                 <input type="submit" class="barbtn" value="Log Out"/>
             </form>
@@ -38,8 +34,8 @@ $lastname = "Zhou";//$user->getLastName();
     <div class="menubar">
         <div class="mainmenu">
             <ul>
-                <li><a href="toBeDeleted/administration.html">Request Administration</a></li>
-                <li><a href="./customerdb.html">Customer DB</a></li>
+                <li><a href="./administration.php">Request Administration</a></li>
+                <li><a href="./customerdb.php">Customer DB</a></li>
             </ul>
         </div>
     </div>
@@ -53,8 +49,6 @@ $lastname = "Zhou";//$user->getLastName();
             <div class="widw">
                 <div class="titbg"><span>Registration Requests</span></div>
                 <table>
-                    <form action="../Controller/RequestCtrl.php" method="post">
-                        <input type="hidden" name="reqtype" value="registration">
                         <tr>
                             <th>Registeration Date</th>
                             <th>Email</th>
@@ -62,26 +56,38 @@ $lastname = "Zhou";//$user->getLastName();
                         </tr>
                         <?php
                         // here get the registration request list to be handled and iterate and show in the table
+                      //true: get registration requests
+                      $registerRequest=RequestHandler::getOpenRequests(true);
+                      foreach($registerRequest as $request){
+						  $email=$request->email;
+						  $date=$request->date;
+						 // $id=$request->id;//supposed to get it
                         ?>
                         <tr>
-                            <td>20.01.2015</td>
-                            <td>222@gmail.com</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="email" value="">
-                        </tr>
+                            <td><?php echo $date;?></td>
+                            <td><?php echo $email;?></td>
+                            <td>
+								<form action="../Controller/RequestCtrl.php" method="post">
+                                   <input type="hidden" name="reqtype" value="registration"/>
+                                   <input type="hidden" name="id" value="<?php echo $id;?>"/>
+								   <input class="barbtn" name="action" type="submit" value="Deny"/>
+                                   <input class="barbtn" name="action" type="submit" value="Accept"/>								   <input type="hidden" name="email" value="<?php $email;?>" />
+								</form> 
+							</td> 
+						</tr>
+                        <?php } ?>
                         <tr>
                             <td>20.01.2015</td>
                             <td>222@gmail.com</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="email" value="">
+                            <td>
+								<form action="../Controller/RequestCtrl.php" method="post">
+                                   <input type="hidden" name="reqtype" value="registration"/>
+                                   <input type="hidden" name="id" value="<?php echo $id;?>"/>
+                                   <input class="barbtn" name="action" type="submit" value="Deny"/>
+                                   <input class="barbtn" name="action" type="submit" value="Accept"/>								   <input type="hidden" name="email" value="<?php $email;?>" />
+								</form> 
+							</td> 
                         </tr>
-                        <tr>
-                            <td>20.01.2015</td>
-                            <td>222@gmail.com</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="email" value="">
-                        </tr>
-                        <form>
                 </table>
             </div>
         </div>
@@ -92,47 +98,54 @@ $lastname = "Zhou";//$user->getLastName();
             <div class="widw">
                 <div class="titbg"><span>Transaction Requests</span></div>
                 <table>
-                    <form action="../Controller/RequestCtrl.php" method="post">
-                        <input type="hidden" name="reqtype" value="transaction"/>
                         <tr>
                             <th>Transaction Date</th>
                             <th>IBAN</th>
                             <th>Amount</th>
                             <th>Approval</th>
                         </tr>
-
+                        
                         <?php
-                        // here get the registration request list to be handled and iterate and show in the table
+                        // here get the transaction request list to be handled and iterate and show in the table
+                        //false: get transaction requests
+                      $registerRequest=RequestHandler::getOpenRequests(false);
+                      foreach($transRequest as $request){
+						  $sender=$request->senderId;
+						  $date=$request->date;
+						  $amount=$request->amount;
+						 // $id=$request->id;//supposed to get it
                         ?>
+                   
+                        <tr>
+                            <td><?php echo $date;?></td>
+                            <td><?php echo $senderId;?></td>
+                            <td><?php echo $amount;?></td>
+                            <td>
+								<form action="../Controller/RequestCtrl.php" method="post">
+								   <input type="hidden" name="reqtype" value="transaction"/>
+								   <input type="hidden" name="id" value="<?php echo $id;?>"/>
+								   <input class="barbtn" name="action" type="submit" value="Deny"/>
+                                   <input class="barbtn" name="action" type="submit" value="Accept"/>
+								   <input type="hidden" name="sender" value="<?php $sender;?>" />
+								</form> 
+							</td> 
+						</tr>
+                        <?php } ?>
+            
                         <tr>
                             <td>20.01.2015</td>
                             <td>xxxx xxxx</td>
                             <td>+xxx.xxx</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="iban" value="">
-                        </tr>
-                        <tr>
-                            <td>20.01.2015</td>
-                            <td>xxxx xxxx</td>
-                            <td>+xxx.xxx</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="iban" value="">
-                        </tr>
-                        <tr>
-                            <td>20.01.2015</td>
-                            <td>xxxx xxxx</td>
-                            <td>+xxx.xxx</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="iban" value="">
-                        </tr>
-                        <tr>
-                            <td>20.01.2015</td>
-                            <td>xxxx xxxx</td>
-                            <td>+xxx.xxx</td>
-                            <td><input class="barbtn" type="submit" value="confirm"/></td>
-                            <input type="hidden" name="iban" value="">
-                        </tr>
-                    </form>
+                            <td>
+								<form action="../Controller/RequestCtrl.php" method="post">
+								   <input type="hidden" name="reqtype" value="transaction"/> 
+								   <input type="hidden" name="id" value="<?php echo $id; ?>"/>
+								   <input class="barbtn" name="action" type="submit" value="Deny"/>
+                                   <input class="barbtn" name="action" type="submit" value="Accept"/>
+								   <input type="hidden" name="sender" value="<?php $sender;?>" />
+								</form> 
+							</td>
+                        </tr> 
                 </table>
             </div>
         </div>
@@ -143,5 +156,5 @@ $lastname = "Zhou";//$user->getLastName();
 
 
 <?php
-//}
+}
 ?>
