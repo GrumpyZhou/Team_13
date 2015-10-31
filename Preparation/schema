@@ -6,7 +6,7 @@ CREATE TABLE users (
 	approved BOOL NOT NULL,
 	mail_address TINYTEXT NOT NULL,
 	password CHAR(64) NOT NULL,
-	registration_date DATE NOT NULL,
+	registration_date DATE NOT NULL DEFAULT CURDATE(),
 	PRIMARY KEY (id)
 	);
 
@@ -17,10 +17,9 @@ CREATE TABLE accounts (
 	);
 
 CREATE TABLE tans (
-	tan_id INT NOT NULL AUTO_INCREMENT,
+	tan_id INT NOT NULL,
 	user_id INT NOT NULL,
 	tan CHAR(15) NOT NULL,
-	tan_id INT NOT NULL,
 	used BOOL NOT NULL,
 	PRIMARY KEY (user_id, tan_id)
 	);
@@ -31,7 +30,7 @@ CREATE TABLE transactions (
 	receiver_id INT NOT NULL,
 	amount DOUBLE NOT NULL,
 	approved BOOL NOT NULL,
-	transaction_date DATE NOT NULL,
+	transaction_date DATE NOT NULL DEFAULT CURDATE(),
 	PRIMARY KEY (id)
 	);
 

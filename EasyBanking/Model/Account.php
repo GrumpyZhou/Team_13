@@ -29,10 +29,12 @@ abstract class Account {
             return "ERROR: Account not approved yet!\n";
         }
 
-        if($employeeAccount == TRUE) {
+        if($employeeAccount) {
             return new Employee($row['first_name'], $row['last_name'], $row['mail_address']);
         } else {
-            return new Customer($row['first_name'], $row['last_name'], $row['mail_address'], $row['id']);
+            $res2 = $dbHandler->execQuery("SELECT * FROM accounts WHERE user_id='" . $row['id'] ."';");
+            $row2 = $res2->fetch_assoc();
+            return new Customer($row['first_name'], $row['last_name'], $row['mail_address'], $row['id'], $row2['balance']);
         }
     }
 
