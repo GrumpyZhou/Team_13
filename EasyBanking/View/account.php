@@ -1,22 +1,15 @@
 <?php
 session_start();
-//require_once('../Model/Customer.php');
 
-//Commented during the test...
-//
-//if (!isset($_SESSION['currentUser'])) {
-//
-//    header("Location:../View/index.php");
-//} else {
-//    $user = $_SESSION['currentUser'];
-
-
-$firstname = "Qunjie";//$user->getFirstName();
-$lastname = "Zhou";//$user->getLastName();
-$iban = "xxx xxx";
-$balance = "123.123";
-$email = "zhou@123.com";
-
+if (!isset($_SESSION['isEmployee'])||$_SESSION['isEmployee']) {
+   header("Location:../View/index.php");
+} else {
+	
+$firstname =  $_SESSION['firstname'];
+$lastname = $_SESSION['lastname'];
+$iban =$_SESSION['iban'];
+$balance = "123.12";
+$email = $_SESSION['email']; 
 ?>
     <!DOCTYPE html>
     <html>
@@ -143,7 +136,6 @@ $email = "zhou@123.com";
     </html>
 
 <?php
-
-//}
+}
 
 ?>
