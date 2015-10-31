@@ -45,10 +45,10 @@ class RequestHandler {
         $dbHandler = DatabaseHandler::getInstance();
         $characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         $tans = array();
-        for($iTan = 0; $iTan < $tanCount; $iTan++)
+        for($iTan = 0; $iTan < self::$tanCount; $iTan++)
         {
             $tans[$iTan] = "";
-            for($i = 0; $i < $tanLength; $i++)
+            for($i = 0; $i < self::$tanLength; $i++)
             {
                 $tans[$iTan] .= $characters[mt_rand(0, strlen($characters)-1)];
             }
@@ -86,7 +86,6 @@ class RequestHandler {
                 $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount']);
             }
         }
-
         return $dataArray;
     }
 
@@ -114,7 +113,7 @@ class RequestHandler {
         //check if already approved
         $dbHandler = DatabaseHandler::getInstance();
         $aprroved = $dbHandler->execQuery("SELECT approved FROM " . $table . " WHERE id='" . $id . "';");
-        if($approved)
+        if($aprroved)
         {
             echo "ERROR: Already approved!\n";
             return NULL;
@@ -127,11 +126,11 @@ class RequestHandler {
         //TODO perform action
         if($transaction)
         {
-            MoneyTansferHandler::performTransaction($id);
+            MoneyTransferHandler::performTransaction($id);
         }
         else
         {
-            $tans = createTans($id);
+            $tans = self::createTans($id);
             $res = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE id='" . $id . "';");
             $row = $res->fetch_assoc();
             $email = $row['mail_address'];
