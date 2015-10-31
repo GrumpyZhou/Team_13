@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+//require_once('../Model/TransactionHandler.php'); // lead to server error
 if (!isset($_SESSION['isEmployee'])||$_SESSION['isEmployee']) {
    header("Location:../View/index.php");
 } else {
@@ -16,10 +16,6 @@ $email = $_SESSION['email'];
     <head lang="en">
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="./main.css">
-        <script type="text/javascript" src="./jspdf/jspdf.js"></script>
-        <script type="text/javascript" src="./jspdf/plugins/split_text_to_size.js"></script>
-        <script type="text/javascript" src="./jspdf/plugins/from_html.js"></script>
-        <script type="text/javascript" src="./jspdf/plugins/standard_fonts_metrics.js"></script>
         <title>EasyBanking-Account</title>
     </head>
     <body>
@@ -40,8 +36,8 @@ $email = $_SESSION['email'];
         <div class="mainmenu">
 
             <ul>
-                <li><a href="toBeDeleted/account.html">Personal Bank Account</a></li>
-                <li><a href="toBeDeleted/transaction.html">Online Transaction</a></li>
+                <li><a href="./account.php"/>Personal Bank Account</a></li>
+                <li><a href="./transaction.php">Online Transaction</a></li>
             </ul>
         </div>
     </div>
@@ -100,28 +96,20 @@ $email = $_SESSION['email'];
 
                     </tr>
                     <?php
-
-                    // To be implemented: get the transaction history of this user. iterate the data and show in the table.
+                 $dataArray=array("date"=>"20.01.2015","iban"=>"9","amount"=>"+123");
+                     //$data=TransactionHandler::GetTransactionHistory() ;//where to get the user_Id??
+                    // To be implemented: get the transaction history of this user. iterate the data and show in the table.  
+                   
                     ?>
                     <tr>
-                        <td>20.01.2015</td>
-                        <td>xxxx xxxx</td>
-                        <td>+xxx.xxx</td>
+                        <td><?php echo $dataArray["date"]; ?></td>
+                        <td><?php echo $dataArray["iban"]; ?></td>
+                        <td><?php echo $dataArray["amount"]; ?></td>
                     </tr>
                     <tr>
-                        <td>20.01.2015</td>
-                        <td>xxxx xxxx</td>
-                        <td>+xxx.xxx</td>
-                    </tr>
-                    <tr>
-                        <td>20.01.2015</td>
-                        <td>xxxx xxxx</td>
-                        <td>+xxx.xxx</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?php echo $dataArray["date"]; ?></td>
+                        <td><?php echo $dataArray["iban"]; ?></td>
+                        <td><?php echo $dataArray["amount"]; ?></td>
                     </tr>
                 </table>
                 <!-- The creation can be either by js or by php, to be determined-->
