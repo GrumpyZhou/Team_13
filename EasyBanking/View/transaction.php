@@ -1,18 +1,10 @@
 <?php
 session_start();
-//require_once('../Model/Customer.php');
-
-//Commented during the test...
-//
-//if (!isset($_SESSION['currentUser'])) {
-//
-//    header("Location:../View/index.php");
-//} else {
-//    $user = $_SESSION['currentUser'];
-
-
-$firstname = "Qunjie";//$user->getFirstName();
-$lastname = "Zhou";//$user->getLastName();
+if (!isset($_SESSION['isEmployee'])||$_SESSION['isEmployee']) {
+   header("Location:../View/index.php");
+} else {
+$firstname =  $_SESSION['firstname'];
+$lastname = $_SESSION['lastname'];
 ?>
 
 <!DOCTYPE html>
@@ -41,8 +33,8 @@ $lastname = "Zhou";//$user->getLastName();
     <div class="mainmenu">
 
         <ul>
-            <li><a href="toBeDeleted/account.html">Personal Bank Account</a></li>
-            <li><a href="toBeDeleted/transaction.html">Online Transaction</a></li>
+            <li><a href="./account.php"/>Personal Bank Account</a></li>
+            <li><a href="./transaction.php">Online Transaction</a></li>
         </ul>
     </div>
 </div>
@@ -102,6 +94,6 @@ $lastname = "Zhou";//$user->getLastName();
 
 <?php
 
-//}
+}
 
 ?>
