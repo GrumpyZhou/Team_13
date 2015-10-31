@@ -22,6 +22,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
                 header("Location:../View/account.php");
             } else {
                 $_SESSION['isEmployee'] = true;
+               // echo  $_SESSION['firstname']." ". $_SESSION['lastname'];
                 header("Location:../View/administration.php");
             }
         }
