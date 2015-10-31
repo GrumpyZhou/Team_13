@@ -4,20 +4,20 @@ include_once "DatabaseHandler.php";
 
 class MoneyTransferHandler {
     static private $parserPath = "../Parser/";
+    static private $parserCall = "./parser";
     static private $uploadPath = "../uploads/";
 
     function __construct(){
     }
 
-    static private function createTransferBatchFile($fileName, $tanData, $transData)
+    static private function createTransferBatchFile($fileName, $transData)
     {
-        $batchFile = fopen(fileName, "w");
+        $batchFile = fopen($fileName, "w");
         if($batchFile == FALSE)
         {
             echo "Error: Failed creating batch file!\n";
             return FALSE;
         }
-        fwrite($batchFile, $tanData);
         fwrite($batchFile, $transData);
         fclose($batchFile);
         return TRUE;
@@ -27,15 +27,17 @@ class MoneyTransferHandler {
     {
         $dbHandler = DatabaseHandler::getInstance();
         $userQuery = "WHERE user_id='" . $user_id . "';";
-        $res = $dbHandler->execQuery("SELECT balance FROM accounts " + userQuery);
+        $res = $dbHandler->execQuery("SELECT balance FROM accounts " + $userQuery);
         $balance = floatval($res);
         $balance += $amount;
-        $dbHanlder->execQuery("UPDATE accounts SET balance='" . $balance . "' " + userQuery);
+        $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' " + $userQuery);
     }
 
-    static private function parseBatchFile($senderId, $filePath)
+    static private function parseBatchFile($senderId, $filePath, $tanId, $tan)
     {
-        exec("self::$parserPath $senderId $filePath");
+        $path = self::$parserPath;
+        $call = self::$parserCall;
+        echo shell_exec("cd $path && $call $senderId $tanId $tan $filePath");
     }
 
     static public function performTransaction($id)
@@ -47,29 +49,28 @@ class MoneyTransferHandler {
         $sender = $row['sender_id'];
         $receiver = $row['receiver_id'];
 
-        changeBalance(-amount, sender);
-        changeBalance(amount, receiver);
+        self::changeBalance(-$amount, $sender);
+        self::changeBalance($amount, $receiver);
     }
 
     static public function transferMoney($source, $receiver, $amount, $tan, $tanId)
     {
-        $tanData = $tanId . " " . $tan . "\n";
         $transData = $receiver . " " . $amount . "\n";
 
         //create batch file
-        $fileName = self::uploadPath . $source;
-        if(!createTransferBatchFile($fileName, $tanData, $transData))
+        $fileName = self::$uploadPath . $source;
+        if(!self::createTransferBatchFile($fileName, $transData))
         {
             return FALSE;
         }
-        parseBatchFile(intval($source), $fileName);
+        self::parseBatchFile(intval($source), $fileName, $tanId, $tan);
 
         return TRUE;
     }
 
     static public function uploadBatch($senderId)
     {
-        $targetDir = $uploadPath . $senderId;
+        $targetDir = self::$uploadPath . $senderId;
         //TODO check if file is correct
         $uploadOK = 1;
 
