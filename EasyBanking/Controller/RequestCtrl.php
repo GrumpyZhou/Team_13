@@ -1,21 +1,29 @@
 <?php
+require_once('../Model/RequestHandler.php');
 
 if (isset($_POST['reqtype'])) {
     $reqtype = $_POST['reqtype'];
-    echo $reqtype;
-
+  //echo $reqtype;
     if ($reqtype == 'registration') {
-        $email = $_POST['email'];
-        echo  "approve registration of  ".$email;
-
-        // .... call function for dealing approval
-
+        $id=$_POST['id']; 
+        $action=$_POST['action'];
+        if($action=='Accept'){
+			 // $transaction: Boolean
+			RequestHandler::approveRequest($id, false);
+		echo  "approve registration of  ".$id;
+		}else{
+			RequestHandler::denyRequest($id,false);
+		}
     } elseif ($reqtype == 'transaction') {
-
-        //$trid = $_POST['trid']; //not implemented yet
-        echo  "approve transaction of  ?? we need a transaction id";
-
-        //call function for dealing  transaction
+        $id=$_POST['id'];  
+        $action=$_POST['action'];
+        if($action=='Accept'){
+			 // $transaction: Boolean
+			RequestHandler::approveRequest($id, true);
+		echo  "approve transaction of  ".$id;
+		}else{
+			RequestHandler::denyRequest($id,true);
+		}
     }
 }
 
