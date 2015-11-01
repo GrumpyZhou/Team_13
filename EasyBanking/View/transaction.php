@@ -68,7 +68,7 @@ $lastname = $_SESSION['lastname'];
     <div class="widw">
         <div class="titbg"><span>Multiple Transaction</span></div>
         <!-- Multiple Transaction Form not implemented yet! -->
-        <form class="transfer" action="../Controller/TransactionCtrl.php" method="post">
+        <form class="transfer" action="../Controller/TransactionCtrl.php" method="post" enctype="multipart/form-data">
             <ul>
                 <li><label>TAN ID</label><br>
                     <input type="text" name="tid" required/></li>
@@ -77,7 +77,6 @@ $lastname = $_SESSION['lastname'];
                     <input type="text" name="tan" required/></li>
                 <li>
                     <label>Upload your TAN batch file</label><br>
-                    <!-- see class fileToUpload usage in php in http://www.w3schools.com/php/php_file_upload.asp  -->
                     <input class="fileToUpload" type="file" name="batchfile" required/>
                 </li>
             </ul>

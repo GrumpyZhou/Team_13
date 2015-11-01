@@ -17,9 +17,16 @@ if (isset($_POST['type'])) {
     } elseif ($type == 'multiple') {
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
-        $batchfile = $_POST['batchfile'];  // 'batchfile'  in a file type?
-        //call function for dealing
-       // parseBatchFile($SESSION_['iban'], $filePath, $tid, $tan)
+        $id = $_SESSION['iban'];
+        $uploadFilePath = $_SERVER['DOCUMENT_ROOT'] . "/Upload/TransactionBatch_" . $id . ".txt";
+        if(move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
+            echo "SUCCESS!";
+            return;
+            //TODO: Process batch file
+        } else {
+            echo "ERROR: Batch file wasn't uploaded successfully!";
+            return;
+        }
     }
 }
 
