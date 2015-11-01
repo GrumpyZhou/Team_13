@@ -5,7 +5,7 @@ require_once('3rd Party\fpdf.php');
 class Transaction
 {
     public $date;
-    public $receiverIBAN;
+    public $IBAN;
     public $amount;
 
     private static $cellWidth = 60;
@@ -14,7 +14,7 @@ class Transaction
     function __construct($date, $IBAN, $amount)
     {
         $this->date = $date;
-        $this->receiverIBAN = $IBAN;
+        $this->IBAN = $IBAN;
         $this->amount = $amount;
     }
 
@@ -40,13 +40,21 @@ class TransactionHistory {
         $dataArray = array();
         while($row = $history->fetch_assoc())
         {
-            $amount = $row['amount'];
-            //if send by the user the amount will be negative
+            $amount;
+            $iban;
+            //if send by the user the amount will be negative and iban will be the receiver
             if($row['sender_id'] == $userId)
             {
+                $iban = $row['receiver_id'];
                 $amount *= -1.0;
             }
-            $dataArray[] = new Transaction($row['transaction_date'], $row['receiver_id'], $amount);
+            else
+            {
+                $amount = $row['amount'];
+                $iban = $row['sender_id'];
+            }
+
+            $dataArray[] = new Transaction($row['transaction_date'], $iban, $amount);
         }
 
         return $dataArray;
@@ -63,7 +71,7 @@ class TransactionHistory {
         $dataArray = self::GetTransactionHistory($userId);
         foreach($dataArray as &$element)
         {
-            Transaction::WriteData($element->date, $element->receiverIBAN, $element->amount, $pdf);
+            Transaction::WriteData($element->date, $element->IBAN, $element->amount, $pdf);
         }
 
         $file = self::$fileName . $userId . ".pdf";
