@@ -33,7 +33,7 @@ class AccountRequest
 class RequestHandler {
     static private $instance = null;
     static private $tanLength = 15;
-    static private $tanCount = 100;
+    static private $tanCount = 10;
 
     static public function getInstance() {
         if (null === self::$instance) {
@@ -44,6 +44,7 @@ class RequestHandler {
 
     private function __construct(){}
 
+    //$id = user id
     private function createTans($id)
     {
         $dbHandler = DatabaseHandler::getInstance();
@@ -57,7 +58,8 @@ class RequestHandler {
                 $tans[$iTan] .= $characters[mt_rand(0, strlen($characters)-1)];
             }
             //TODO check for unqiueness
-            $dbHandler->execQuery("INSERT INTO tans VALUES ('" . $id . "','" . $tans[$iTan] . "','FALSE');");
+            $dbHandler->execQuery("INSERT INTO tans (tan_id, user_id, tan, used)
+                VALUES ('" .$iTan. "','" .$id. "','" .$tans[$iTan]. "','0');");
         }
         return $tans;
     }
@@ -97,7 +99,7 @@ class RequestHandler {
     // $email -> E-Mail address of the customer as String
     private function mailTans($tans, $email) {
         $mailText = "Hello,\nwith this E-Mail we send you your Tans,\nwhich you can use in the future to authenticate yourself,\nin order to perform money transactions:\n\n";
-        for($i = 0; $i < self::$tanLength; $i++) {
+        for($i = 0; $i < self::$tanCount; $i++) {
             $mailText .= $i . ": " . $tans[$i] . "\n";
         }
         mail($email, "Your personal TAN numbers", $mailText, "From: EasyBanking");
@@ -127,7 +129,6 @@ class RequestHandler {
         //change the value
         $dbHandler->execQuery("UPDATE " . $table . " SET approved='1' WHERE id='" . $id . "';");
 
-        //TODO perform action
         if($transaction)
         {
             MoneyTransferHandler::performTransaction($id);
@@ -138,7 +139,7 @@ class RequestHandler {
             $res = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE id='" . $id . "';");
             $row = $res->fetch_assoc();
             $email = $row['mail_address'];
-            mailTans($tans, $email);
+            self::mailTans($tans, $email);
         }
     }
 
