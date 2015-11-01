@@ -1,6 +1,6 @@
 <?php
 session_start();
-//require_once('../Model/TransactionHandler.php'); // lead to server error
+require_once('../Model/TransactionHistory.php');
 if (!isset($_SESSION['isEmployee'])||$_SESSION['isEmployee']) {
    header("Location:../View/index.php");
 } else {
@@ -96,13 +96,13 @@ $email = $_SESSION['email'];
 
                     </tr>
                     <?php
-                    $dataArray=TransactionHandler::GetTransactionHistory($iban) ;
+                    $dataArray=TransactionHistory::GetTransactionHistory($iban) ;
                     foreach($dataArray as &$element)
                     {
                     ?>
                     <tr>
-                        <td><?php echo   $element->date; ?></td>
-                        <td><?php echo  $element->receiverIBAN; ?></td>
+                        <td><?php echo  $element->date; ?></td>
+                        <td><?php echo  $element->IBAN; ?></td>
                         <td><?php echo  $element->amount; ?></td>
                     </tr>
                     <?php 
