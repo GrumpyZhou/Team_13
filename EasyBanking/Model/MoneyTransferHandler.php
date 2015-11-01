@@ -63,21 +63,6 @@ class MoneyTransferHandler {
         }
         return self::parseBatchFile($source, $filePath, $tanId, $tan);
     }
-
-    static public function uploadBatch($senderId)
-    {
-        $targetDir = self::$uploadPath . $senderId;
-        //TODO check if file is correct
-        $uploadOK = 1;
-
-        if(!move_uploaded_file($_FILES["batchfile"]["name"], $targetDir))
-        {
-            echo "Error: Uploading batch file!\n";
-            return NULL;
-        }
-
-        parseBatchFile($senderId, $targetDir);
-    }
 }
 ?>
 
