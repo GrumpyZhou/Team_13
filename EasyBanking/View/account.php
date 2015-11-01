@@ -109,7 +109,7 @@ $email = $_SESSION['email'];
                     } ?>
                 </table>
                 <!-- Don't know how to use it ? And the form didn't appear!-->
-                <form class="viewtrans"  action="./transhistory.html"><input class="barbtn" type="submit"
+                <form class="viewtrans"  action="../Controller/DownloadHistory.php"><input class="barbtn" type="submit"
                                                value="View/Export"/>
                 </form>
             </div>
