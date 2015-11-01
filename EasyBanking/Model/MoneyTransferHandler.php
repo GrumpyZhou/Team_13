@@ -33,11 +33,11 @@ class MoneyTransferHandler {
         $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' " . $userQuery);
     }
 
-    static private function parseBatchFile($senderId, $filePath, $tanId, $tan)
+    // Returns the exit code of the executed command.
+    static public function parseBatchFile($senderId, $filePath, $tanId, $tan)
     {
-        $path = self::$parserPath;
-        $call = self::$parserCall;
-        echo shell_exec("cd $path && $call $senderId $tanId $tan $filePath");
+        exec("parseBatchFile $senderId $tanId \"$tan\" \"$filePath\"", $output, $rc);
+        return $rc;
     }
 
     static public function performTransaction($id)
