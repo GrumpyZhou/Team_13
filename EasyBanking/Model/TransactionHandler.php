@@ -43,7 +43,7 @@ class TransactionHistory {
             $dataArray[] = new Transaction($row['transaction_date'], $row['receiver_id'], $row['amount']);
         }
 
-        return dataArray;
+        return $dataArray;
     }
 
     //Returns the path to the created pdf file
