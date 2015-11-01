@@ -9,7 +9,6 @@ if (!isset($_SESSION['isEmployee'])||!$_SESSION['isEmployee']) {
 //can not get these fields !!
 $firstname = $_SESSION['firstname'];
 $lastname = $_SESSION['lastname'];
-echo $firstname;
 ?>
     <!DOCTYPE html>
     <html>
@@ -24,7 +23,7 @@ echo $firstname;
     <div class="topbar">
         <div class="logo">EasyBanking</div>
         <div id="logout">
-            <label><? echo "????".$firstname . " " . $lastname; ?></label>
+            <label><? echo $firstname . " " . $lastname; ?></label>
             <form action="../Controller/LogoutCtrl.php" method="post">
                 <input type="submit" class="barbtn" value="Log Out"/>
             </form>
