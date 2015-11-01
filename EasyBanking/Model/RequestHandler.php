@@ -99,6 +99,7 @@ class RequestHandler {
         mail($email, "Your personal TAN numbers", $mailText, "From: EasyBanking");
     }
 
+    // $id: the user id or the id of the transaction
     // $transaction: Boolean
     // -> If True, the function approves the transaction with id $id
     // -> If False, the function approves the registration request with user-id $id
@@ -138,6 +139,7 @@ class RequestHandler {
         }
     }
 
+    // $id: the user id or the id of the transaction
     // $transaction: Boolean
     // -> If True, the function denies the transaction with id $id
     // -> If False, the function denies the registration request for user-id $id

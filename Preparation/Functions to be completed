@@ -19,7 +19,8 @@ Employee.php:
  
 RequestHandler:
  getOpenRequests($accounts) and others to be used should be static?
+  you can get an instance of the requesthandler with getInstance but I can also make the methods static if you prefer that
  approve&deny Request : what is id field? it can be id but not good for display so maybe I make it a hidden field so give me the id together with email.
-
+  id is the key of the users or the transactions table
 Customer DB:
 Still miss interface to get the user information by giving only email or iban;
