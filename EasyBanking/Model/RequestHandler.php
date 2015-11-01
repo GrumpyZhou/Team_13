@@ -19,10 +19,12 @@ class AccountRequest
 {
     public $date;
     public $mail;
-    function __construct($date, $mail)
+    public $id;
+    function __construct($date, $mail, $id)
     {
         $this->date = $date;
         $this->mail = $mail;
+        $this->id = $id;
     }
 }
 
@@ -76,7 +78,7 @@ class RequestHandler {
         {
             while($row = $pending->fetch_assoc())
             {
-                $dataArray[] = new AccountRequest($row['registration_date'], $row['mail_address']);
+                $dataArray[] = new AccountRequest($row['registration_date'], $row['mail_address'], $row['id']);
             }
         }
         else
