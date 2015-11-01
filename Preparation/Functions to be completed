@@ -8,8 +8,10 @@ how to use the returned dataArray
 
 MoneyTransferHandler:
 transferMoney($source, $receiver, $amount, $tan, $tanId) what is the $source is it the user's iban?
+	source and receiver are the user ids
 and  
 parseBatchFile($senderId, $filePath, $tanId, $tan) what is $filePath? Is it the input file 's val?
+	the name of the batch file should be $senderId, the file should be placed in the Upload directory which is inside EasyBanking
 
 
 Employee.php:

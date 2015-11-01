@@ -5,7 +5,7 @@ include_once "DatabaseHandler.php";
 class MoneyTransferHandler {
     static private $parserPath = "../Parser/";
     static private $parserCall = "./parser";
-    static private $uploadPath = "../uploads/";
+    static private $uploadPath = "../Upload/";
 
     function __construct(){
     }
@@ -53,6 +53,8 @@ class MoneyTransferHandler {
         self::changeBalance($amount, $receiver);
     }
 
+    //$source: user id of the sender
+    //$receiver: user id of the receiver
     static public function transferMoney($source, $receiver, $amount, $tan, $tanId)
     {
         $transData = $receiver . " " . $amount . "\n";
