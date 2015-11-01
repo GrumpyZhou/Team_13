@@ -3,9 +3,6 @@ include_once "RequestHandler.php";
 include_once "DatabaseHandler.php";
 
 class MoneyTransferHandler {
-    static private $parserPath = "../Parser/";
-    static private $parserCall = "./parser";
-    static private $uploadPath = "../Upload/";
 
     function __construct(){
     }
@@ -55,19 +52,16 @@ class MoneyTransferHandler {
 
     //$source: user id of the sender
     //$receiver: user id of the receiver
-    static public function transferMoney($source, $receiver, $amount, $tan, $tanId)
+    static public function transferMoney($source, $receiver, $amount, $tan, $tanId, $filePath)
     {
         $transData = $receiver . " " . $amount . "\n";
 
         //create batch file
-        $fileName = self::$uploadPath . $source;
-        if(!self::createTransferBatchFile($fileName, $transData))
+        if(!self::createTransferBatchFile($filePath, $transData))
         {
             return FALSE;
         }
-        self::parseBatchFile(intval($source), $fileName, $tanId, $tan);
-
-        return TRUE;
+        return self::parseBatchFile($source, $filePath, $tanId, $tan);
     }
 
     static public function uploadBatch($senderId)
