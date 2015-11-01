@@ -116,15 +116,14 @@ class RequestHandler {
         //check if already approved
         $dbHandler = DatabaseHandler::getInstance();
         $aprroved = $dbHandler->execQuery("SELECT approved FROM " . $table . " WHERE id='" . $id . "';");
-        if($aprroved)
+        if($aprroved == '1')
         {
             echo "ERROR: Already approved!\n";
             return NULL;
         }
 
         //change the value
-        $dbHandler = DatabaseHandler::getInstance();
-        $dbHandler->execQuery("UPDATE " . $table . " SET approved='TRUE' WHERE id='" . $id . "';");
+        $dbHandler->execQuery("UPDATE " . $table . " SET approved='1' WHERE id='" . $id . "';");
 
         //TODO perform action
         if($transaction)
