@@ -35,12 +35,18 @@ class TransactionHistory {
     public static function GetTransactionHistory($userId)
     {
         $dbHandler = DatabaseHandler::getInstance();
-        $history = $dbHandler->execQuery("SELECT * FROM transactions WHERE sender_id='" . $userId . "';");
+        $history = $dbHandler->execQuery("SELECT * FROM transactions WHERE sender_id='" . $userId . "' OR receiver_id='" . $userId . "';");
 
         $dataArray = array();
         while($row = $history->fetch_assoc())
         {
-            $dataArray[] = new Transaction($row['transaction_date'], $row['receiver_id'], $row['amount']);
+            $amount = $row['amount'];
+            //if send by the user the amount will be negative
+            if($row['sender_id'] == $userId)
+            {
+                $amount *= -1.0;
+            }
+            $dataArray[] = new Transaction($row['transaction_date'], $row['receiver_id'], $amount);
         }
 
         return $dataArray;
