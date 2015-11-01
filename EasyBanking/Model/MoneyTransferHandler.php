@@ -30,7 +30,7 @@ class MoneyTransferHandler {
         $res = $dbHandler->execQuery("SELECT balance FROM accounts " + $userQuery);
         $balance = floatval($res);
         $balance += $amount;
-        $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' " + $userQuery);
+        $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' " . $userQuery);
     }
 
     static private function parseBatchFile($senderId, $filePath, $tanId, $tan)
@@ -86,3 +86,4 @@ class MoneyTransferHandler {
     }
 }
 ?>
+

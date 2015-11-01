@@ -7,11 +7,13 @@ class TransactionRequest
     public $date;
     public $senderId;
     public $amount;
-    function __construct($date, $sender, $amount)
+    public $transactionId;
+    function __construct($date, $sender, $amount, $transactionId)
     {
         $this->date = $date;
         $this->senderId = $sender;
         $this->amount = $amount;
+        $this->transactionId = $transactionId;
     }
 }
 
@@ -72,7 +74,7 @@ class RequestHandler {
             $table = "users";
         }
 
-        $pending = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE approved='FALSE';");
+        $pending = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE approved='0';");
         $dataArray = array();
         if($accounts)
         {
@@ -85,7 +87,7 @@ class RequestHandler {
         {
             while($row = $pending->fetch_assoc())
             {
-                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount']);
+                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount'], $row['id']);
             }
         }
         return $dataArray;
@@ -161,3 +163,4 @@ class RequestHandler {
     }
 }
 ?>
+

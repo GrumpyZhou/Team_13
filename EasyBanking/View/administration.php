@@ -109,16 +109,16 @@ echo $firstname;
                         // here get the transaction request list to be handled and iterate and show in the table
                         //false: get transaction requests
                       $registerRequest=RequestHandler::getOpenRequests(false);
-                      foreach($transRequest as $request){
+                      foreach($registerRequest as $request){
 						  $sender=$request->senderId;
 						  $date=$request->date;
 						  $amount=$request->amount;
-						 // $id=$request->id;//supposed to get it
+						  $id=$request->transactionId;
                         ?>
                    
                         <tr>
                             <td><?php echo $date;?></td>
-                            <td><?php echo $senderId;?></td>
+                            <td><?php echo $sender;?></td>
                             <td><?php echo $amount;?></td>
                             <td>
 								<form action="../Controller/RequestCtrl.php" method="post">
