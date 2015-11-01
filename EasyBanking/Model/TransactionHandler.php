@@ -1,6 +1,6 @@
 <?php
 include_once "DatabaseHandler.php";
-require('3rd Party\fpdf.php');
+require_once('3rd Party\fpdf.php');
 
 class Transaction
 {

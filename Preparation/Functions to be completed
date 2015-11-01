@@ -2,9 +2,12 @@
 TransactionHandler:
 can not call 
 require_once('../Model/TransactionHandler.php') maybe something due to the pdf module;
+	I was able to call it not sure why that is happening. From which file do you try to call it?
 
 Where is the user_id to call the function transactionHistory
-how to use the returned dataArray 
+	it is the id in the users table
+how to use the returned dataArray
+	the dataArray contains the date, receiverIBAN and amount of all the transactions, you should be able to just loop through the array and use that data
 
 MoneyTransferHandler:
 transferMoney($source, $receiver, $amount, $tan, $tanId) what is the $source is it the user's iban?
