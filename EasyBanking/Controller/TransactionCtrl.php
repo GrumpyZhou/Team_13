@@ -20,9 +20,11 @@ if (isset($_POST['type'])) {
         $id = $_SESSION['iban'];
         $uploadFilePath = $_SERVER['DOCUMENT_ROOT'] . "/Upload/TransactionBatch_" . $id . ".txt";
         if(move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
-            echo "SUCCESS!";
-            return;
-            //TODO: Process batch file
+            $rc = MoneyTransferHandler::parseBatchFile($senderID, $uploadFilePath, $tid, $tan);
+            if($rc != 0) {
+                echo "ERROR: Batch file couldn't be processed! Error Code: $rc";
+                return;
+            }
         } else {
             echo "ERROR: Batch file wasn't uploaded successfully!";
             return;
