@@ -17,3 +17,4 @@ FromLineOverride=YES
 ```
 
 To compile the Batch Parser, cd into the Parser source code directory and execute make.
+The Batch Parser then has to be installed in a directory contained in the PATH variable (e.g. "/usr/local/bin/"), with the name "parseBatchFile".
