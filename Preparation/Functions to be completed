@@ -1,0 +1,25 @@
+
+TransactionHandler:
+can not call 
+require_once('../Model/TransactionHandler.php') maybe something due to the pdf module;
+
+Where is the user_id to call the function transactionHistory
+how to use the returned dataArray 
+
+MoneyTransferHandler:
+transferMoney($source, $receiver, $amount, $tan, $tanId) what is the $source is it the user's iban?
+and  
+parseBatchFile($senderId, $filePath, $tanId, $tan) what is $filePath? Is it the input file 's val?
+
+
+Employee.php:
+ miss the include_once of Account.php
+ Test shows I can not get the variables of Employee class....
+ 
+ 
+RequestHandler:
+ getOpenRequests($accounts) and others to be used should be static?
+ approve&deny Request : what is id field? it can be id but not good for display so maybe I make it a hidden field so give me the id together with email.
+
+Customer DB:
+Still miss interface to get the user information by giving only email or iban;
