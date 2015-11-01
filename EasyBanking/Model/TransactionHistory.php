@@ -38,7 +38,7 @@ class TransactionHistory {
         $dataArray = array();
         while($row = $history->fetch_assoc())
         {
-            $amount;
+            $amount = row['amount'];
             $iban;
             //if send by the user the amount will be negative and iban will be the receiver
             if($row['sender_id'] == $userId)
@@ -48,7 +48,6 @@ class TransactionHistory {
             }
             else
             {
-                $amount = $row['amount'];
                 $iban = $row['sender_id'];
             }
 
