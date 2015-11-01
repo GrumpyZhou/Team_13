@@ -59,9 +59,9 @@ echo $firstname;
                       //true: get registration requests
                       $registerRequest=RequestHandler::getOpenRequests(true);
                       foreach($registerRequest as $request){
-						  $email=$request->email;
+						  $email=$request->mail;
 						  $date=$request->date;
-						 // $id=$request->id;//supposed to get it
+						  $id=$request->id;
                         ?>
                         <tr>
                             <td><?php echo $date;?></td>
