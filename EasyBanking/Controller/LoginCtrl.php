@@ -18,7 +18,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             if ($user instanceof Customer) {
                 $_SESSION['isEmployee'] = false;
                 $_SESSION['iban'] = $user->IBAN;
-               // $_SESSION['balance'] = $user->balance;   
+                $_SESSION['balance'] = $user->balance;   
                 header("Location:../View/account.php");
             } else {
                 $_SESSION['isEmployee'] = true;
