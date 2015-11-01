@@ -27,8 +27,6 @@ class Transaction
 }
 
 class TransactionHistory {
-    private static $fileName = "../Upload/TransactionHistory_";
-
     function __construct(){
     }
 
@@ -61,7 +59,7 @@ class TransactionHistory {
     }
 
     //Returns the path to the created pdf file
-    public static function ExportPDF($userId)
+    public static function ExportPDF($userId, $outputFilepath)
     {
         $pdf = new FPDF();
         $pdf->AddPage();
@@ -74,10 +72,8 @@ class TransactionHistory {
             Transaction::WriteData($element->date, $element->IBAN, $element->amount, $pdf);
         }
 
-        $file = self::$fileName . $userId . ".pdf";
-        $pdf->Output($file);
-
-        return $file;
+        $pdf->Output($outputFilepath);
+        return $outputFilepath;
     }
 }
 ?>
