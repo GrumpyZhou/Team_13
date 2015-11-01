@@ -154,8 +154,10 @@ class RequestHandler {
 
         $dbHandler = DatabaseHandler::getInstance();
         $dbHandler->execQuery("DELETE FROM " . $table . " WHERE id='" . $id . "';");
-        //TODO: In case of denied user registration, also delete corresponding
-        //      columns in the other tables (e.g. accounts table).
+        if(!$transaction)
+        {
+            $dbHandler->execQuery("DELETE FROM accounts WHERE user_id='" .$id. "';");
+        }
     }
 }
 ?>
