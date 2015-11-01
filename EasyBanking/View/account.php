@@ -8,7 +8,7 @@ if (!isset($_SESSION['isEmployee'])||$_SESSION['isEmployee']) {
 $firstname =  $_SESSION['firstname'];
 $lastname = $_SESSION['lastname'];
 $iban =$_SESSION['iban'];
-$balance = "123.12";
+$balance = $_SESSION['balance'];
 $email = $_SESSION['email']; 
 ?>
     <!DOCTYPE html>
@@ -96,23 +96,19 @@ $email = $_SESSION['email'];
 
                     </tr>
                     <?php
-                 $dataArray=array("date"=>"20.01.2015","iban"=>"9","amount"=>"+123");
-                     //$data=TransactionHandler::GetTransactionHistory() ;//where to get the user_Id??
-                    // To be implemented: get the transaction history of this user. iterate the data and show in the table.  
-                   
+                    $dataArray=TransactionHandler::GetTransactionHistory($iban) ;
+                    foreach($dataArray as &$element)
+                    {
                     ?>
                     <tr>
-                        <td><?php echo $dataArray["date"]; ?></td>
-                        <td><?php echo $dataArray["iban"]; ?></td>
-                        <td><?php echo $dataArray["amount"]; ?></td>
+                        <td><?php echo   $element->date; ?></td>
+                        <td><?php echo  $element->receiverIBAN; ?></td>
+                        <td><?php echo  $element->amount; ?></td>
                     </tr>
-                    <tr>
-                        <td><?php echo $dataArray["date"]; ?></td>
-                        <td><?php echo $dataArray["iban"]; ?></td>
-                        <td><?php echo $dataArray["amount"]; ?></td>
-                    </tr>
+                    <?php 
+                    } ?>
                 </table>
-                <!-- The creation can be either by js or by php, to be determined-->
+                <!-- Don't know how to use it ? And the form didn't appear!-->
                 <form class="viewtrans"  action="./transhistory.html"><input class="barbtn" type="submit"
                                                value="View/Export"/>
                 </form>
