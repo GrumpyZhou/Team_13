@@ -3,10 +3,11 @@ include_once "../Model/DatabaseHandler.php";
 
 //get the customers
 $dbHandler = DatabaseHandler::getInstance();
-$data = $dbHandler->execQuery("SELECT * FROM users WHERE isEmployee='0';");
+$data = $dbHandler->execQuery("SELECT * FROM users INNER JOIN accounts ON users.id = accounts.user_id;");
 echo "<table>
 <tr>
 <th>IBAN</th>
+<th>Balance</th>
 <th>First Name</th>
 <th>Last Name</th>
 <th>Email</th>
@@ -17,10 +18,12 @@ while($row = $data->fetch_assoc())
 {
     echo "<tr>";
     echo "<td>" .$row['id']. "</td>";
+    echo "<td>" .$row['balance']. "</td>";
     echo "<td>" .$row['first_name']. "</td>";
     echo "<td>" .$row['last_name']. "</td>";
     echo "<td>" .$row['mail_address']. "</td>";
     echo "<td>" .$row['registration_date']. "</td>";
 }
+//TODO: add buttons downloadhistory call with IBAN $_POST
 echo "</table>";
 ?>
