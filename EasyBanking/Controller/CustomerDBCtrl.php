@@ -20,10 +20,16 @@ while($row = $data->fetch_assoc())
     echo "<td>" .$row['id']. "</td>";
     echo "<td>" .$row['balance']. "</td>";
     echo "<td>" .$row['first_name']. "</td>";
-    echo "<td>" .$row['last_name']. "</td>";
+    echo "<td>" .$row['last_name']. "</td>"
     echo "<td>" .$row['mail_address']. "</td>";
     echo "<td>" .$row['registration_date']. "</td>";
+    echo 
+    "<td>
+        <form action='DownloadHistory.php' method='post'>
+            <input type='hidden' name='iban' value=" .$row['id']. " /> 
+            <input type='submit' value='Export History'/>
+        </form>
+    </td>";
 }
-//TODO: add buttons downloadhistory call with IBAN $_POST
 echo "</table>";
 ?>
