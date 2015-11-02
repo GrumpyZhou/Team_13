@@ -19,9 +19,6 @@
             <label>Password</label><input type="password" name="password" required/>
             <input type="submit" class="barbtn" value="Log In"/>
         </form>
-        <form action="toBeDeleted/administration.html">
-            <input type="submit" class="barbtn" value="(Adm)LogIn"/>
-        </form>
     </div>
 </div>
 
@@ -31,7 +28,7 @@
     <div class="banner"><h1>Manage your bank account with EasyBanking!</h1>
         <span>Convenient access, Easy operation, Clean layout </span>
     </div>
-    <div class="descript">No Accout Yet? Register Now!</div>
+    <div class="descript">No Account Yet? Register Now!</div>
     <div class="widw">
         <div class="titbg"><span>Transfer Money</span></div>
         <form class="register" action="../Controller/RegisterCtrl.php" method="post">
