@@ -34,7 +34,7 @@ $lastname = $_SESSION['lastname'];
         <div class="mainmenu">
             <ul>
                 <li><a href="./administration.php">Request Administration</a></li>
-                <li><a href="./customerdb.php">Customer DB</a></li>
+                <li><a href="../Controller/CustomerDBCtrl.php">Customer DB</a></li>
             </ul>
         </div>
     </div>
