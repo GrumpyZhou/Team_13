@@ -8,7 +8,7 @@
 #define TAN_SIZE 16
 #define MYSQL_SERVER_ADDRESS "localhost"
 #define MYSQL_USER "root"
-#define MYSQL_PW "samurai"
+#define MYSQL_PW "?team13!"
 #define MYSQL_DB "bank"
 
 void usage(char **argv)

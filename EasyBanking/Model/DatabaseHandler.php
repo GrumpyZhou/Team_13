@@ -16,7 +16,7 @@ class DatabaseHandler {
 
     private function connectToDB() {
         $this->connected = FALSE;
-        $this->mysqlConnection = new mysqli("127.0.0.1", "root", "samurai", "bank", 3306);
+        $this->mysqlConnection = new mysqli("127.0.0.1", "root", "?team13!", "bank", 3306);
         if($this->mysqlConnection->connect_errno) {
             echo "Couldn't connect to DB: " . $this->mysqlConnection->connect_error;
             return FALSE;
