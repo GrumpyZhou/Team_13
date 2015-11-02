@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 		amount_position = line_buffer + first_space_location + 1;
 		amount = atof(amount_position);
 
-		printf("Current line: %d - %f\n", receiver_id, amount);
+		//printf("Current line: %d - %f\n", receiver_id, amount);
 
 		//1. recipient exists? 2. confirmation required? 3. add transaction 4. if no confirmation: change balances
 
@@ -97,6 +97,7 @@ int main(int argc, char **argv) {
 		 }
 		 res = mysql_use_result(conn);
 
+
 		 if ((row = mysql_fetch_row(res)) == NULL)
 		 {
 			 printf("Recipient does not exist! Exit.");
@@ -105,12 +106,14 @@ int main(int argc, char **argv) {
 		 }
 		 mysql_free_result(res);
 
+
 		 sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", sender_id, amount);
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
 		 }
 		 res = mysql_use_result(conn);
+
 
 		 if ((row = mysql_fetch_row(res)) == NULL)
 		 {
@@ -119,6 +122,7 @@ int main(int argc, char **argv) {
 			 exit(EXIT_FAILURE);
 		 }
 		 mysql_free_result(res);
+
 
 		 sprintf(sql_command, "UPDATE tans SET used='1' WHERE user_id = '%d' AND tan = '%s' AND tan_id = '%d'", sender_id, tan, tan_id);
 		 if (mysql_query(conn, sql_command)) {
@@ -140,7 +144,7 @@ int main(int argc, char **argv) {
 		 }
 
 
-		 if(amount < 10000)
+		 if(amount <= 10000)
 		 {
 			 sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", amount, sender_id);
 			 if (mysql_query(conn, sql_command)) {
@@ -157,8 +161,9 @@ int main(int argc, char **argv) {
 
 		 }
 
-		 mysql_close(conn);
 	}
+
+	mysql_close(conn);
 
 	fclose (batch_file);
 
