@@ -24,8 +24,9 @@ class MoneyTransferHandler {
     {
         $dbHandler = DatabaseHandler::getInstance();
         $userQuery = "WHERE user_id='" . $user_id . "';";
-        $res = $dbHandler->execQuery("SELECT balance FROM accounts " + $userQuery);
-        $balance = floatval($res);
+        $res = $dbHandler->execQuery("SELECT * FROM accounts " .$userQuery);
+        $row = $res->fetch_assoc();
+        $balance = $row['balance'];
         $balance += $amount;
         $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' " . $userQuery);
     }
