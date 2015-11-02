@@ -86,6 +86,12 @@ int main(int argc, char **argv) {
 		amount_position = line_buffer + first_space_location + 1;
 		amount = atof(amount_position);
 
+		if (amount <= 0)
+		{
+			fprintf(stderr, "Negative or an amount of zero is not allowed!\n");
+			exit(EXIT_FAILURE);
+		}
+
 		//printf("Current line: %d - %f\n", receiver_id, amount);
 
 		//1. recipient exists? 2. confirmation required? 3. add transaction 4. if no confirmation: change balances
