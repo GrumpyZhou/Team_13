@@ -20,7 +20,7 @@ if (isset($_POST['type'])) {
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
         if(move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
-            $rc = MoneyTransferHandler::parseBatchFile($senderID, $uploadFilePath, $tid, $tan);
+            $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
             if($rc != 0) {
                 echo "ERROR: Batch file couldn't be processed! Error Code: $rc";
                 return;
