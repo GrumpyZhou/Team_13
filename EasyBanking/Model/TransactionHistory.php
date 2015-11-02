@@ -33,7 +33,7 @@ class TransactionHistory {
     public static function GetTransactionHistory($userId)
     {
         $dbHandler = DatabaseHandler::getInstance();
-        $history = $dbHandler->execQuery("SELECT * FROM transactions WHERE sender_id='" . $userId . "' OR receiver_id='" . $userId . "';");
+        $history = $dbHandler->execQuery("SELECT * FROM transactions WHERE (sender_id='" . $userId . "' OR receiver_id='" . $userId . "') AND approved='1';");
 
         $dataArray = array();
         while($row = $history->fetch_assoc())
