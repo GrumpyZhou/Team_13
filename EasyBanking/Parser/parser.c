@@ -42,7 +42,8 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	memcpy(tan, argv[3], 16);
+	memcpy(tan, argv[3], 15);
+	tan[15] = '\0';
 	tan_id = atoi(argv[2]);
 
 	MYSQL *conn;
@@ -61,7 +62,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	sprintf(sql_command, "SELECT * FROM tans WHERE user_id = %d AND tan = %s AND tan_id = %d AND used = 0", sender_id, tan, tan_id);
+	sprintf(sql_command, "SELECT * FROM tans WHERE user_id = %d AND tan = '%s' AND tan_id = '%d' AND used = '0'", sender_id, tan, tan_id);
 	if (mysql_query(conn, sql_command)) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);
@@ -89,7 +90,7 @@ int main(int argc, char **argv) {
 
 		//1. recipient exists? 2. confirmation required? 3. add transaction 4. if no confirmation: change balances
 
-		 sprintf(sql_command, "SELECT * FROM users WHERE id = %d", receiver_id);
+		 sprintf(sql_command, "SELECT * FROM users WHERE id = '%d'", receiver_id);
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
@@ -104,7 +105,7 @@ int main(int argc, char **argv) {
 		 }
 		 mysql_free_result(res);
 
-		 sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = %d AND balance > %f", sender_id, amount);
+		 sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", sender_id, amount);
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
@@ -119,7 +120,7 @@ int main(int argc, char **argv) {
 		 }
 		 mysql_free_result(res);
 
-		 sprintf(sql_command, "UPDATE tans SET used='1' WHERE user_id = %d AND tan = %s", sender_id, tan);
+		 sprintf(sql_command, "UPDATE tans SET used='1' WHERE user_id = '%d' AND tan = '%s' AND tan_id = '%d'", sender_id, tan, tan_id);
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
 			 exit(1);
@@ -141,14 +142,14 @@ int main(int argc, char **argv) {
 
 		 if(amount < 10000)
 		 {
-			 sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = %d", amount, sender_id);
+			 sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", amount, sender_id);
 			 if (mysql_query(conn, sql_command)) {
 				 fprintf(stderr, "%s\n", mysql_error(conn));
 				 exit(1);
 			 }
 
 
-			 sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = %d", amount, receiver_id);
+			 sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = '%d'", amount, receiver_id);
 			 if (mysql_query(conn, sql_command)) {
 				 fprintf(stderr, "%s\n", mysql_error(conn));
 				 exit(1);
