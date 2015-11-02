@@ -33,7 +33,7 @@ class AccountRequest
 class RequestHandler {
     static private $instance = null;
     static private $tanLength = 15;
-    static private $tanCount = 10;
+    static private $tanCount = 100;
 
     static public function getInstance() {
         if (null === self::$instance) {
@@ -48,7 +48,7 @@ class RequestHandler {
     private function createTans($id)
     {
         $dbHandler = DatabaseHandler::getInstance();
-        $characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        $characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         $tans = array();
         for($iTan = 0; $iTan < self::$tanCount; $iTan++)
         {
