@@ -53,9 +53,9 @@ class MoneyTransferHandler {
 
     //$source: user id of the sender
     //$receiver: user id of the receiver
-    static public function transferMoney($source, $receiver, $amount, $tan, $tanId, $filePath)
+    static public function transferMoney($source, $receiver, $amount, $tan, $tanId, $description, $filePath)
     {
-        $transData = $receiver . " " . $amount . "\n";
+        $transData = $receiver . " " . $amount . " " . $description ."\n";
 
         //create batch file
         if(!self::createTransferBatchFile($filePath, $transData))

@@ -58,6 +58,9 @@ $lastname = $_SESSION['lastname'];
                 <li>
                 <li><label>TAN</label><br>
                     <input type="text" name="tan" required/></li>
+                <li><label>Description</label><br>
+                    <input type="text" name="description" />
+                </li>
             </ul>
             <input type="hidden" name="type" value="single">
             <input class="barbtn" type="submit" value="Submit"/>

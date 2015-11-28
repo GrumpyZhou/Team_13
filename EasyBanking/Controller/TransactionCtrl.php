@@ -11,7 +11,8 @@ if (isset($_POST['type'])) {
         $amount = $_POST['amount'];
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
-        $rc = MoneyTransferHandler::transferMoney($id, $iban, $amount, $tan, $tid, $uploadFilePath);
+        $description = $_POST['description'];
+        $rc = MoneyTransferHandler::transferMoney($id, $iban, $amount, $tan, $tid,$description, $uploadFilePath);
         if($rc != 0) {
             echo "ERROR: Transfer could not be processed! Error Code: $rc";
             return;
@@ -34,3 +35,4 @@ if (isset($_POST['type'])) {
 
 //after the transaction goes back to the account page
 header("Location:../View/account.php");
+
