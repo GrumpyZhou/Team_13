@@ -27,9 +27,12 @@ $balance = $_POST['balance'];
 
         <tr>
             <th>Transaction Date</th>
-            <th>IBAN</th>
+            <th>Source Name</th>
+            <th>Source IBAN</th>
+            <th>Receiver Name</th>
+            <th>Receiver IBAN</th>
             <th>Amount</th>
-
+            <th>Description</th>
         </tr>
         <?php 
         $dataArray=TransactionHistory::GetTransactionHistory($id);
@@ -38,8 +41,12 @@ $balance = $_POST['balance'];
         ?>
         <tr>
             <td><?php echo $element->date; ?></td>
-            <td><?php echo $element->IBAN; ?></td>
+            <td><?php echo $element->sourceName; ?></td>
+            <td><?php echo $element->sourceIBAN ?></td>
+            <td><?php echo $element->receiverName; ?></td>
+            <td><?php echo $element->receiverIBAN; ?></td>
             <td><?php echo $element->amount; ?></td>
+            <td><?php echo $element->description; ?></td>
         </tr>
         <?php
         }
