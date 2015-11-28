@@ -12,8 +12,8 @@ class Transaction
     public $amount;
     public $description;
 
-    private static $cellWidth = 40;
-    private static $cellHeight = 8;
+    private static $cellWidth = 24;
+    private static $cellHeight = 4;
 
     function __construct($date, $sourceName, $sourceIBAN, $receiverName, $receiverIBAN, $amount, $description)
     {
@@ -26,15 +26,24 @@ class Transaction
         $this->description = $description;
     }
 
-    public static function WriteData($date, $sourceName, $sourceIBAN, $receiverName, $receiverIBAN, $amount, $description, $pdf)
+    public static function WriteElement($width, $height,$data, $pdf)
     {
-       $pdf->Cell(self::$cellWidth,self::$cellHeight, $date,0, 0);
-       $pdf->Cell(self::$cellWidth,self::$cellHeight, $sourceName, 0,0);
-       $pdf->Cell(self::$cellWidth/2,self::$cellHeight, $sourceIBAN, 0,0);
-       $pdf->Cell(self::$cellWidth,self::$cellHeight, $receiverName, 0,0);
-       $pdf->Cell(self::$cellWidth/2,self::$cellHeight, $receiverIBAN, 0,0);
-       $pdf->Cell(self::$cellWidth,self::$cellHeight, $amount, 0,0);
-       $pdf->Cell(self::$cellWidth,self::$cellHeight, $description, 0,1);
+        $x = $pdf->GetX();
+        $y = $pdf->GetY();
+        $pdf->MultiCell($width, $height, $data);
+        $pdf->SetXY($x + $width, $y);
+    }
+
+        public static function WriteData($date, $sourceName, $sourceIBAN, $receiverName, $receiverIBAN, $amount, $description, $pdf)
+    {
+        $pdf->SetXY(0, $pdf->GetY() + self::$cellHeight*4);
+        self::WriteElement(self::$cellWidth,self::$cellHeight, $date, $pdf);
+        self::WriteElement(self::$cellWidth,self::$cellHeight, $sourceName,$pdf);
+        self::WriteElement(self::$cellWidth,self::$cellHeight, $sourceIBAN,$pdf);
+        self::WriteElement(self::$cellWidth,self::$cellHeight, $receiverName,$pdf);
+        self::WriteElement(self::$cellWidth,self::$cellHeight, $receiverIBAN,$pdf);
+        self::WriteElement(self::$cellWidth,self::$cellHeight, $amount,$pdf);
+        self::WriteElement(self::$cellWidth * 2.8,self::$cellHeight, $description,$pdf);
     }
 }
 
@@ -88,4 +97,4 @@ class TransactionHistory {
         return $outputFilepath;
     }
 }
-?>
+?
