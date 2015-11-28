@@ -4,12 +4,12 @@ require_once('../Model/TransactionHistory.php');
 if (!isset($_SESSION['isEmployee'])||$_SESSION['isEmployee']) {
    header("Location:../View/index.php");
 } else {
-	
+
 $firstname =  $_SESSION['firstname'];
 $lastname = $_SESSION['lastname'];
 $iban =$_SESSION['iban'];
 $balance = $_SESSION['balance'];
-$email = $_SESSION['email']; 
+$email = $_SESSION['email'];
 ?>
     <!DOCTYPE html>
     <html>
@@ -91,9 +91,12 @@ $email = $_SESSION['email'];
 
                     <tr>
                         <th>Transaction Date</th>
-                        <th>IBAN</th>
+                        <th>Source Name</th>
+                        <th>Source IBAN</th>
+                        <th>Destination Name</th>
+                        <th>Destination IBAN</th>
                         <th>Amount</th>
-
+                        <th>Description</th>
                     </tr>
                     <?php
                     $dataArray=TransactionHistory::GetTransactionHistory($iban) ;
@@ -101,11 +104,15 @@ $email = $_SESSION['email'];
                     {
                     ?>
                     <tr>
-                        <td><?php echo  $element->date; ?></td>
-                        <td><?php echo  $element->IBAN; ?></td>
-                        <td><?php echo  $element->amount; ?></td>
+                        <td><?php echo $element->date; ?>ate</td>
+                        <td><?php echo $element->sourceName; ?></td>
+                        <td><?php echo $element->sourceIBAN; ?></td>
+                        <td><?php echo $element->receiverName; ?></td>
+                        <td><?php echo $element->receiverIBAN; ?></td>
+                        <td><?php echo $element->amount; ?></td>
+                        <td><?php echo $element->description; ?></td>
                     </tr>
-                    <?php 
+                    <?php
                     } ?>
                 </table>
                 <!-- Don't know how to use it ? And the form didn't appear!-->
