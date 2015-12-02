@@ -1,5 +1,7 @@
 package gui;
 
+import TanLogic.TanCalculator;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
@@ -35,14 +37,9 @@ public class SelectFileButtonListener implements ActionListener {
             reader = new BufferedReader(new FileReader(batchFile));
             LinkedList<String> lines = new LinkedList<String>();
             String line = reader.readLine();
-            int i = 1;
             while(line != null) {
-                if(!checkBatchLine(line)) {
-                    mainFrame.displayErrorMessage("Error in batch file line " + i);
-                    return;
-                }
                 lines.add(line);
-                i++;
+                line = reader.readLine();
             }
             showTan(lines);
         } catch (IOException e) {
@@ -61,15 +58,31 @@ public class SelectFileButtonListener implements ActionListener {
         return true;
     }
 
-    private void showTan(LinkedList<String> lines) {
+    private boolean showTan(LinkedList<String> lines) {
         int count = lines.size();
         double[] amounts = new double[count];
         String[] targetAccounts = new String[count];
-        //TODO
+        for(int i = 0; i < count; i++) {
+            String str = lines.get(i);
+            str = str.trim();
+            String[] vals = str.split(" ", -1);
+            if((vals.length != 2) || !checkBatchLine(vals[0], vals[1])) {
+                mainFrame.displayErrorMessage("Error in batch file line " + (i+1));
+                return false;
+            }
+            targetAccounts[i] = vals[0];
+            amounts[i] = Double.parseDouble(vals[1]);
+        }
+        TanCalculator tanCalculator = new TanCalculator();
+        String tan = tanCalculator.getTan(pinInput, amounts, targetAccounts);
+        mainFrame.displayTAN(tan);
+        return true;
     }
 
-    private boolean checkBatchLine(String line) {
-        //TODO
-        return false;
+    private boolean checkBatchLine(String accountNumber, String amount) {
+        InputSanityChecker inputSanityChecker = new InputSanityChecker();
+        if(!inputSanityChecker.checkTargetAccountInput(accountNumber) || !inputSanityChecker.checkTransferAmountInput(amount))
+            return false;
+        return true;
     }
 }
