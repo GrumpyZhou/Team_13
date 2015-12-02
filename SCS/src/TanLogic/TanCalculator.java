@@ -1,3 +1,4 @@
+package TanLogic;
 
 public class TanCalculator {
 
