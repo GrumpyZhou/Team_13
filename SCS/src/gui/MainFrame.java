@@ -6,7 +6,9 @@ import java.awt.*;
 public class MainFrame extends JFrame {
 
     private Dimension screenSize;
-    private JTextField outputBox;
+    protected JTextField outputBox;
+    protected JTextField[] inputBoxes;
+    private static final String[] labels = {"Amount: ", "Target Account: ", "Pin: "};
     private static final String windowTitle = "EazyBanking SCS Tan generator";
 
     public MainFrame() {
@@ -20,11 +22,11 @@ public class MainFrame extends JFrame {
         outputBox.setEditable(false);
         outputBox.setBackground(Color.WHITE);
         outputBox.setHorizontalAlignment(JTextField.CENTER);
+        inputBoxes = new JTextField[labels.length];
         populateFrame();
     }
 
     private void populateFrame() {
-        String[] labels = {"Amount: ", "Target Account: ", "Pin: "};
         GridBagConstraints c = new GridBagConstraints();
         for(int i = 0; i < labels.length; i++) {
             c.fill = GridBagConstraints.NONE;
@@ -38,10 +40,12 @@ public class MainFrame extends JFrame {
             c.weightx = 0.8;
             c.gridx = 1;
             c.gridy = i;
-            super.add(new JTextField(), c);
+            inputBoxes[i] = new JTextField();
+            super.add(inputBoxes[i], c);
         }
         String[] buttonTexts = {"Submit", "Use batch file"};
-        for(int i = 0; i < 2; i++) {
+        JButton[] buttons = new JButton[buttonTexts.length];
+        for(int i = 0; i < buttonTexts.length; i++) {
             c = new GridBagConstraints();
             c.gridx = i;
             c.gridy = labels.length;
@@ -49,8 +53,11 @@ public class MainFrame extends JFrame {
             c.ipadx = 10;
             c.insets = new Insets(10, 0, 10, 0);
             c.anchor = GridBagConstraints.PAGE_END;
-            super.add(new JButton(buttonTexts[i]), c);
+            buttons[i] = new JButton(buttonTexts[i]);
+            super.add(buttons[i], c);
         }
+        buttons[0].addActionListener(new SubmitButtonListener(this));
+        buttons[1].addActionListener(new SelectFileButtonListener(this));
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = labels.length+1;
