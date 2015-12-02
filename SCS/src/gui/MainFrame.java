@@ -67,6 +67,16 @@ public class MainFrame extends JFrame {
         super.add(outputBox, c);
     }
 
+    protected void displayErrorMessage(String msg) {
+        outputBox.setBackground(Color.RED);
+        outputBox.setText(msg);
+    }
+
+    protected void displayTAN(String tan) {
+        outputBox.setBackground(Color.GREEN);
+        outputBox.setText(tan);
+    }
+
     public void makeVisible() {
         super.setVisible(true);
     }
