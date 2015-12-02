@@ -4,7 +4,6 @@ import TanLogic.TanCalculator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Arc2D;
 
 public class SubmitButtonListener implements ActionListener {
 
