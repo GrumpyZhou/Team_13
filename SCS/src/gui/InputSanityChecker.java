@@ -15,7 +15,7 @@ public class InputSanityChecker {
     }
 
     public boolean checkTargetAccountInput(String input) {
-        if(input.length() > 10)
+        if(input.length() > 10 || input.length() < 1)
             return false;
         for(char c : input.toCharArray()) {
             if(c < '0' || c > '9')
