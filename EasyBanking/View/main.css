@@ -34,17 +34,18 @@ div.logo {
     font-size: 35.45px;
     color: #FFFFFF;
     line-height: 44px;
-    margin-left: 20%;
+    margin-top: 0.4%;
+    margin-left:26%;
     position: inherit;
-    margin-top: 6px;
     float: left;
+
 }
 
 /*Topbar-login form*/
 div.login {
     float: right;
-    margin-right: 20%;
-    margin-top: 16px;
+    margin-right: 26%;
+    margin-top: 1.4%;
 }
 
 .login form {
