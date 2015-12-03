@@ -12,23 +12,30 @@ if (isset($_POST['type'])) {
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
         $description = $_POST['description'];
-        $rc = MoneyTransferHandler::transferMoney($id, $iban, $amount, $tan, $tid,$description, $uploadFilePath);
-        if($rc != 0) {
+        $rc = MoneyTransferHandler::transferMoney($id, $iban, $amount, $tan, $tid, $description, $uploadFilePath);
+        if ($rc != 0) {
             echo "ERROR: Transfer could not be processed! Error Code: $rc";
             return;
         }
     } elseif ($type == 'multiple') {
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
-        if(move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
-            $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
-            if($rc != 0) {
-                echo "ERROR: Batch file couldn't be processed! Error Code: $rc";
+        //check the postfix of the batchfile, it is only allowed to be .txt
+        $fileName = $_POST['batchfile'];
+        if (endswith($fileName, '.txt')) {
+            if (move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
+                $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
+                if ($rc != 0) {
+                    echo "ERROR: Batch file couldn't be processed! Error Code: $rc";
+                    return;
+                }
+            } else {
+                echo "ERROR: Batch file wasn't uploaded successfully!";
                 return;
             }
-        } else {
-            echo "ERROR: Batch file wasn't uploaded successfully!";
-            return;
+        }else{
+            echo "ERROR: wrong file type.";
+            return ;
         }
     }
 }
