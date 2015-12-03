@@ -46,7 +46,8 @@
                 </tr>
                 <tr>
                     <td><input type="email" name="email" required/></td>
-                    <td><input type="password" name="password" pattern=".{6,}" title="The password should be least 6 characters" required /></td>
+                    <td><input type="password" name="password" pattern=".{6,}"
+                               title="The password should be least 6 characters" required/></td>
                 </tr>
                 <tr>
                     <td>Are you an employee?</td>
@@ -61,8 +62,19 @@
             </table>
         </form>
     </div>
+    <div class="descript">Forget your password?</div>
+
+    <div class="widw">
+        <div class="titbg"><span>Password Recovery</span></div>
+        <form class="register" action="../Controller/RegisterCtrl.php" method="post">
+            <label>Email</label> <input type="email" name="email" required/>
+            <input class="barbtn" type="submit" value="Send Token"/>
+        </form>
+    </div>
 </div>
 
+<br>
+<br>
 
 </body>
 </html>
