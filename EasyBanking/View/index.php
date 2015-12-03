@@ -15,7 +15,7 @@
     <div class="logo">EasyBanking</div>
     <div class="login">
         <form action="../Controller/LoginCtrl.php" method="post">
-            <label>Email</label><input type="text" name="email" required/>
+            <label>Email</label><input type="email" name="email" required/>
             <label>Password</label><input type="password" name="password" required/>
             <input type="submit" class="barbtn" value="Log In"/>
         </form>
