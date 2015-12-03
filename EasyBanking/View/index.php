@@ -45,8 +45,8 @@
                     <td>Password</td>
                 </tr>
                 <tr>
-                    <td><input type="text" name="email" required/></td>
-                    <td><input type="password" name="password" required/></td>
+                    <td><input type="email" name="email" required/></td>
+                    <td><input type="password" name="password" pattern=".{6,}" title="The password should be least 6 characters" required /></td>
                 </tr>
                 <tr>
                     <td>Are you an employee?</td>
