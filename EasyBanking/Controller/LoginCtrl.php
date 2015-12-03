@@ -3,7 +3,7 @@ session_start();
 require_once('../Model/Account.php');
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
-    $email = htmlspecialchars($_POST['email']);
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
     $user =Account::login($email, $password);  
@@ -23,7 +23,6 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
                 header("Location:../View/account.php");
             } else {
                 $_SESSION['isEmployee'] = true;
-               // echo  $_SESSION['firstname']." ". $_SESSION['lastname'];
                 header("Location:../View/administration.php");
             }
         }
