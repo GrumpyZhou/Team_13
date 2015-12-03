@@ -3,8 +3,9 @@ session_start();
 require_once('../Model/Account.php');
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
-    $email = $_POST['email'];
+    $email = htmlspecialchars($_POST['email']);
     $password = $_POST['password'];
+
     $user =Account::login($email, $password);  
         if(is_string($user)){
 			echo "Error message: ".$user;
@@ -27,6 +28,5 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             }
         }
     }
-//header("Location:../View/account.php"); //also for test
 
 
