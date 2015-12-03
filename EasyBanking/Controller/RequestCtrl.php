@@ -9,7 +9,8 @@ if (isset($_POST['reqtype'])) {
         $action=$_POST['action'];
         if($action=='Accept'){
              // $transaction: Boolean
-            RequestHandler::approveRequest($id, false);
+            $startBalance=$_POST['startBalance'];
+            RequestHandler::approveRequest($id, false, $startBalance);
         }else{
             RequestHandler::denyRequest($id,false);
         }

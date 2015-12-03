@@ -109,7 +109,8 @@ class RequestHandler {
     // $transaction: Boolean
     // -> If True, the function approves the transaction with id $id
     // -> If False, the function approves the registration request with user-id $id
-    public function approveRequest($id, $transaction)
+    // $startBalance: if not specified zero
+    public function approveRequest($id, $transaction, $startBalance=0.0)
     {
         $table = "users";
         if($transaction)
@@ -140,6 +141,9 @@ class RequestHandler {
             $row = $res->fetch_assoc();
             $email = $row['mail_address'];
             self::mailTans($tans, $email);
+
+            $balance = floatval($startBalance);
+            $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' WHERE user_id='" . $id . "';"); 
         }
     }
 

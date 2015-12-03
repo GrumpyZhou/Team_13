@@ -67,10 +67,12 @@ $lastname = $_SESSION['lastname'];
                             <td><?php echo $email;?></td>
                             <td>
                                 <form action="../Controller/RequestCtrl.php" method="post">
+                                   <input type="text" name="startBalance" />
                                    <input type="hidden" name="reqtype" value="registration"/>
                                    <input type="hidden" name="id" value="<?php echo $id;?>"/>
                                    <input class="barbtn" name="action" type="submit" value="Deny"/>
-                                   <input class="barbtn" name="action" type="submit" value="Accept"/>                                  <input type="hidden" name="email" value="<?php $email;?>" />
+                                   <input class="barbtn" name="action" type="submit" value="Accept"/>
+                                   <input type="hidden" name="email" value="<?php $email;?>" />
                                 </form>
                             </td>
                         </tr>
