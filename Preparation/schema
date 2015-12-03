@@ -36,8 +36,11 @@ CREATE TABLE transactions (
 	PRIMARY KEY (id)
 	);
 
-CREATE TABLE pwrecovery (
+﻿CREATE TABLE passwdsec (
 	user_id INT NOT NULL,
 	token CHAR(64) NOT NULL,
-	PRIMARY KEY (id)
-	);
+	token_valid_time TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	failed_login_attempt INT NOT NULL,
+	locked_time TIMESTAMP,
+	PRIMARY KEY (user_id)
+ 	);
