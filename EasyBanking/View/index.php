@@ -28,6 +28,7 @@
     <div class="banner"><h1>Manage your bank account with EasyBanking!</h1>
         <span>Convenient access, Easy operation, Clean layout </span>
     </div>
+    <div class="clear"/>
     <div class="descript">No Account Yet? Register Now!</div>
     <div class="widw">
         <div class="titbg"><span>Transfer Money</span></div>
