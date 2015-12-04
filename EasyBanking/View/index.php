@@ -66,9 +66,9 @@
 
     <div class="widw">
         <div class="titbg"><span>Password Recovery</span></div>
-        <form class="register" action="../Controller/RegisterCtrl.php" method="post">
-            <label>Email</label> <input type="email" name="email" required/>
-            <input class="barbtn" type="submit" value="Send Token"/>
+        <form class="pwdrec" action="../Controller/RegisterCtrl.php" method="post">
+            <label>Email</label> <input id='pwdinput' type="email" name="email" required/>
+            <input id='pwdbtn'class="barbtn" type="submit" value="Send Token"/>
         </form>
     </div>
 </div>

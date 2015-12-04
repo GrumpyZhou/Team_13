@@ -26,6 +26,7 @@ div.topbar {
     color: #FFFFFF;
     width: 100%;
     height: 50px;
+    float:left;
 
 }
 
@@ -166,6 +167,32 @@ div.descript {
     height: 25px;
     margin: 10px auto 0px 40%;
 }
+
+
+/*Password Recovery*/
+.pwdrec {
+    margin-bottom: 4%;
+    margin-top: 3%;
+    width: 100%;
+}
+
+#pwdinput {
+
+    width:  44%;
+    padding: 0.5%;
+    margin: 0 2% 0 2%;
+}
+
+.pwdrec label{
+    margin-left: 10%;
+}
+
+#pwdbtn{
+    ﻿margin-left: 16%;
+    width: 18%;
+
+}
+
 
 /*Menu Bar*/
 /* Rectangle 7: */
