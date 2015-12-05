@@ -141,13 +141,13 @@ div.descript {
 /*Register Form + Button */
 
 .register table {
-    margin: 4% auto;
-    width: auto;
+    margin: 4% 0 3% 5%;
+    width: 92%;
 }
 
 .register input {
-    width: 210px;
-    margin: auto 15px 15px auto;
+    margin: 1% 0 4% 0%;
+    width: 90%;
     height: 20px;
 }
 
@@ -176,21 +176,24 @@ div.descript {
     width: 100%;
 }
 
-#pwdinput {
+.pwdinput {
 
     width:  44%;
     padding: 0.5%;
     margin: 0 2% 0 2%;
 }
 
-.pwdrec label{
-    margin-left: 10%;
+#llong {
+    margin-left: 6%;
 }
 
-#pwdbtn{
-    ﻿margin-left: 16%;
-    width: 18%;
+#lshort {
+    margin-left: 12.5%;
+}
 
+
+#pwdbtn{
+    width: 18%;
 }
 
 
