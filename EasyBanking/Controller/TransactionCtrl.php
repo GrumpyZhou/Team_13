@@ -20,22 +20,15 @@ if (isset($_POST['type'])) {
     } elseif ($type == 'multiple') {
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
-        //check the postfix of the batchfile, it is only allowed to be .txt
-        $fileName = $_POST['batchfile'];
-        if (endsWith($fileName, '.txt')) {
-            if (move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
-                $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
-                if ($rc != 0) {
-                    echo "ERROR: Batch file couldn't be processed! Error Code: $rc";
-                    return;
-                }
-            } else {
-                echo "ERROR: Batch file wasn't uploaded successfully!";
+        if (move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
+            $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
+            if ($rc != 0) {
+                echo "ERROR: Batch file couldn't be processed! Error Code: $rc";
                 return;
             }
-        }else{
-            echo "ERROR: wrong file type.";
-            return ;
+        } else {
+            echo "ERROR: Batch file wasn't uploaded successfully!";
+            return;
         }
     }
 }
