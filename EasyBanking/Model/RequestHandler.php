@@ -6,14 +6,20 @@ include_once "3rd Party/fpdf_protection.php";
 class TransactionRequest
 {
     public $date;
+    public $senderName;
     public $senderId;
+    public $destinationName;
+    public $destinationId;
     public $amount;
     public $transactionId;
     public $description;
-    function __construct($date, $sender, $amount, $transactionId, $description)
+    function __construct($date, $senderName, $senderId, $destinationName, $destinationId, $amount, $transactionId, $description)
     {
         $this->date = $date;
-        $this->senderId = $sender;
+        $this->senderName = $senderName;
+        $this->senderId = $senderId;
+        $this->destinationName = $destinationName;
+        $this->destinationId = $destinationId;
         $this->amount = $amount;
         $this->transactionId = $transactionId;
         $this->description = $description;
@@ -68,6 +74,14 @@ class RequestHandler {
         return $tans;
     }
 
+    private function GetUserName($id)
+    {
+        $dbHandler = DatabaseHandler::getInstance();
+        $row = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $id . "';")->fetch_assoc();
+        $name = $row['first_name'] . " " . $row['last_name'];
+        return $name;
+    }
+
     // $account: Boolean
     // -> If True, the function returns pending registration requests
     // -> If False, the function returns pending transaction requests
@@ -93,7 +107,11 @@ class RequestHandler {
         {
             while($row = $pending->fetch_assoc())
             {
-                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount'], $row['id'], $row['description']);
+                $senderId = $row['sender_id'];
+                $senderName = self::GetUserName($senderId);
+                $destId = $row['receiver_id'];
+                $destName = self::GetUserName($destId);
+                $dataArray[] = new TransactionRequest($row['transaction_date'], $senderName, $senderId, $destName, $destId, $row['amount'], $row['id'], $row['description']);
             }
         }
         return $dataArray;
@@ -230,7 +248,6 @@ class RequestHandler {
             $dbHandler->execQuery("DELETE FROM accounts WHERE user_id='" .$id. "';");
             $dbHandler->execQuery("DELETE FROM scs WHERE user_id='" .$id. "';");
         }
-
     }
 }
 ?>

@@ -89,8 +89,12 @@ $lastname = $_SESSION['lastname'];
                 <table>
                         <tr>
                             <th>Transaction Date</th>
-                            <th>IBAN</th>
+                            <th>Source Name</th>
+                            <th>Source IBAN</th>
+                            <th>Destination Name</th>
+                            <th>Destination IBAN</th>
                             <th>Amount</th>
+                            <th>Description</th>
                             <th>Approval</th>
                         </tr>
 
@@ -99,16 +103,24 @@ $lastname = $_SESSION['lastname'];
                         //false: get transaction requests
                       $registerRequest=RequestHandler::getOpenRequests(false);
                       foreach($registerRequest as $request){
-                          $sender=$request->senderId;
+                          $senderId=$request->senderId;
+                          $senderName=$request->senderName;
+                          $destId=$request->destinationId;
+                          $destName=$request->destinationName;
                           $date=$request->date;
                           $amount=$request->amount;
                           $id=$request->transactionId;
+                          $desc=$request->description;
 ?>
 
                         <tr>
                             <td><?php echo $date;?></td>
-                            <td><?php echo $sender;?></td>
+                            <td><?php echo $senderName;?></td>
+                            <td><?php echo $senderId;?></td>
+                            <td><?php echo $destName;?></td>
+                            <td><?php echo $destId;?></td>
                             <td><?php echo $amount;?></td>
+                            <td><?php echo $desc; ?></td>
                             <td>
                                 <form action="../Controller/RequestCtrl.php" method="post">
                                    <input type="hidden" name="reqtype" value="transaction"/>
