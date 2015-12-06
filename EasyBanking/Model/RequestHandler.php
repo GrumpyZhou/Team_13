@@ -9,12 +9,14 @@ class TransactionRequest
     public $senderId;
     public $amount;
     public $transactionId;
-    function __construct($date, $sender, $amount, $transactionId)
+    public $description;
+    function __construct($date, $sender, $amount, $transactionId, $description)
     {
         $this->date = $date;
         $this->senderId = $sender;
         $this->amount = $amount;
         $this->transactionId = $transactionId;
+        $this->description = $description;
     }
 }
 
@@ -91,7 +93,7 @@ class RequestHandler {
         {
             while($row = $pending->fetch_assoc())
             {
-                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount'], $row['id']);
+                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount'], $row['id'], $row['description']);
             }
         }
         return $dataArray;
@@ -152,7 +154,7 @@ class RequestHandler {
 
         mail($email, $subject, "", $headers);
     }
-    
+
     // $email -> E-Mail address of the customer as String
     private function mailSCS($email) {
         $mailText = "Hello,\nyou have been approved at EasyBanking.\nYou can download the SCS at <>\nin order to perform money transactions.\n\n";
@@ -228,7 +230,7 @@ class RequestHandler {
             $dbHandler->execQuery("DELETE FROM accounts WHERE user_id='" .$id. "';");
             $dbHandler->execQuery("DELETE FROM scs WHERE user_id='" .$id. "';");
         }
-        
+
     }
 }
 ?>
