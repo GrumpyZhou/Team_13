@@ -58,7 +58,7 @@ $lastname = $_SESSION['lastname'];
             <h1>Requests To Be Handled!</h1>
         </div>
         <div class="regireq">
-            <div class="widw">
+            <div class="widw  wide">
                 <div class="titbg"><span>Registration Requests</span></div>
                 <table>
                         <tr>
@@ -97,7 +97,7 @@ $lastname = $_SESSION['lastname'];
 
 
         <div class="transreq">
-            <div class="widw">
+            <div class="widw wide">
                 <div class="titbg"><span>Transaction Requests</span></div>
                 <table>
                         <tr>
