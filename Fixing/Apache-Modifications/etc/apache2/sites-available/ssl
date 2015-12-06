@@ -1,0 +1,28 @@
+<VirtualHost _default_:443>
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/easy.crt
+    SSLCertificateKeyFile /etc/ssl/keys/easyBank.pem
+    
+    # Pfad zu den Webinhalten
+    DocumentRoot /var/www
+    ErrorDocument 404 /custom_404.html
+    ErrorDocument 403 /custom_403.html
+    <Directory /var/www>
+     	Order allow,deny
+  	deny from all
+  	Options None
+  	AllowOverride None
+    </Directory>
+    <Directory /var/www/View>
+   	allow from all
+    </Directory>
+</VirtualHost>
+
+<Location />
+   <LimitExcept GET POST>
+	order deny,allow
+	deny from all
+   </LimitExcept>
+
+</Location>
+RewriteRule \.txt - [F]
