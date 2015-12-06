@@ -34,7 +34,7 @@ class Transaction
         $pdf->SetXY($x + $width, $y);
     }
 
-        public static function WriteData($date, $sourceName, $sourceIBAN, $receiverName, $receiverIBAN, $amount, $description, $pdf)
+    public static function WriteData($date, $sourceName, $sourceIBAN, $receiverName, $receiverIBAN, $amount, $description, $pdf)
     {
         $pdf->SetXY(0, $pdf->GetY() + self::$cellHeight*4);
         self::WriteElement(self::$cellWidth,self::$cellHeight, $date, $pdf);
@@ -50,6 +50,8 @@ class Transaction
 class TransactionHistory {
     function __construct(){
     }
+
+    private static $transactionsPerPage = 13;
     //returns firstname lastname from user as string
     public static function GetAccountName($userId)
     {
@@ -88,9 +90,16 @@ class TransactionHistory {
 
         Transaction::WriteData("Transaction Date", "Source Name", "Source IBAN", "Receiver Name", "Receiver IBAN", "Amount", "Description", $pdf);
         $dataArray = self::GetTransactionHistory($userId);
+        $count = 0;
         foreach($dataArray as &$element)
         {
             Transaction::WriteData($element->date, $element->sourceName, $element->sourceIBAN, $element->receiverName, $element->receiverIBAN, $element->amount, $element->description, $pdf);
+            if($count > self::$transactionsPerPage)
+            {
+                $pdf->AddPage();
+                $count = 0;
+            }
+            $count = $count + 1;
         }
 
         $pdf->Output($outputFilepath);
