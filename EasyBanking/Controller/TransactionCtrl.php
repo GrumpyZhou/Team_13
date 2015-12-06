@@ -22,7 +22,7 @@ if (isset($_POST['type'])) {
         $tan = $_POST['tan'];
         //check the postfix of the batchfile, it is only allowed to be .txt
         $fileName = $_POST['batchfile'];
-        if (endswith($fileName, '.txt')) {
+        if (endsWith($fileName, '.txt')) {
             if (move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
                 $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
                 if ($rc != 0) {

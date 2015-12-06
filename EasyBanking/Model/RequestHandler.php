@@ -152,6 +152,12 @@ class RequestHandler {
 
         mail($email, $subject, "", $headers);
     }
+    
+    // $email -> E-Mail address of the customer as String
+    private function mailSCS($email) {
+        $mailText = "Hello,\nyou have been approved at EasyBanking.\nYou can download the SCS at <>\nin order to perform money transactions.\n\n";
+        mail($email, "Your account at EasyBanking", $mailText, "From: EasyBanking");
+    }
 
     // $id: the user id or the id of the transaction
     // $transaction: Boolean
@@ -184,12 +190,19 @@ class RequestHandler {
         }
         else
         {
-            $tans = self::createTans($id);
             $res = $dbHandler->execQuery("SELECT * FROM " . $table . " WHERE id='" . $id . "';");
             $row = $res->fetch_assoc();
             $email = $row['mail_address'];
-            $tanFile = self::CreateTanPDF($tans, $id, $row['password']);
-            self::mailTans($tanFile, $email);
+            $usesSCS = $row['uses_scs'];
+            if($usesSCS)
+            {
+				self::mailSCS($email);
+			}
+			else
+			{
+				$tanFile = self::CreateTanPDF($tans, $id, $row['password']);
+				self::mailTans($tanFile, $email);
+			}
 
             $balance = floatval($startBalance);
             $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' WHERE user_id='" . $id . "';");
@@ -213,7 +226,9 @@ class RequestHandler {
         if(!$transaction)
         {
             $dbHandler->execQuery("DELETE FROM accounts WHERE user_id='" .$id. "';");
+            $dbHandler->execQuery("DELETE FROM scs WHERE user_id='" .$id. "';");
         }
+        
     }
 }
 ?>

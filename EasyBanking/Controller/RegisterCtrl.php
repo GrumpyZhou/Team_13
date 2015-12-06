@@ -9,13 +9,18 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     $firstName = htmlspecialchars($_POST['fname']);
     $lastName = htmlspecialchars($_POST['lname']);
     $password = $_POST['password'];
-    $isEmployee = isset($_POST['yes']) ? true : false;
     $email = $_POST['email'];
+    $isEmployee = isset($_POST['yes']) ? true : false;
+    $usesSCS = false;
+    if (isset($_POST['tan_method']) and $_POST['tan_method'] == 'SCS')
+    {
+         $usesSCS = true;
+    } 
 
-    $result = Account::register($email, $firstName, $lastName, $password, $isEmployee);
+    $result = Account::register($email, $firstName, $lastName, $password, $isEmployee, $usesSCS);
     if (is_string($result)) {
 
-        echo "Error:" . $result;
+        echo $result;
     } else {
         echo "You have registered successfully!";
         echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
@@ -25,4 +30,3 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     echo "Invalid email!";
 
 }
-

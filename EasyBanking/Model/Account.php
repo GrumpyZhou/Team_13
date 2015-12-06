@@ -42,14 +42,14 @@ abstract class Account {
 
     // Returns TRUE if the registration was successfull
     // Otherwise returns a String containing an error message
-    public static function register($email, $firstName, $lastName, $password, $isEmployee) {
+    public static function register($email, $firstName, $lastName, $password, $isEmployee, $usesSCS) {
         $dbHandler = DatabaseHandler::getInstance();
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         if($res->fetch_assoc() != NULL) {
             return "ERROR: An account with that email has already been created!\n";
         }
 
-        $query = "INSERT INTO users (first_name, last_name, isEmployee, approved, mail_address, password)";
+        $query = "INSERT INTO users (first_name, last_name, isEmployee, approved, mail_address, password, uses_scs)";
         $query .= " VALUES ('" . $firstName . "', '" . $lastName . "', ";
         if($isEmployee) {
             $query .= "TRUE, FALSE, ";
@@ -57,7 +57,13 @@ abstract class Account {
             $query .= "FALSE, FALSE, ";
         }
         $query .= "'" . $email . "', ";
-        $query .= "'" . self::calculateHash($password) . "');";
+        $query .= "'" . self::calculateHash($password) . "', ";
+        
+        if($usesSCS) {
+			$query .= "TRUE" . ");";
+		} else {
+			$query .= "FALSE" . ");";
+		}
 
         $rc = $dbHandler->execQuery($query);
         if($rc != TRUE) {
@@ -79,7 +85,17 @@ abstract class Account {
         if($dbHandler->execQuery($query) != TRUE) {
             return "ERROR: Account entry for new user couldn't be created!\n";
         }
-
+        
+        //Add SCS row if user chose SCS
+        if($usesSCS) {
+			$pin = mt_rand(100000, 999999);
+			$pin_string = (string) $pin;
+			$query = "INSERT INTO scs VALUES (" . $userID . ", '" . $pin_string . "', 0);";
+			if($dbHandler->execQuery($query) != TRUE) {
+				return "ERROR: Account entry for new user couldn't be created!\n";
+			}
+			return "You have registered successfully! Your SCS PIN is " . $pin_string . "! Please remember or save it somewhere save NOW. It will not be shown again!";
+		}
         return TRUE;
     }
 

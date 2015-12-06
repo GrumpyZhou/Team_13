@@ -62,21 +62,6 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	sprintf(sql_command, "SELECT * FROM tans WHERE user_id = %d AND tan = '%s' AND tan_id = '%d' AND used = '0'", sender_id, tan, tan_id);
-	if (mysql_query(conn, sql_command)) {
-		fprintf(stderr, "%s\n", mysql_error(conn));
-		exit(1);
-	}
-	res = mysql_use_result(conn);
-
-	if ((row = mysql_fetch_row(res)) == NULL)
-	{
-		printf("TAN not available or already used! Exit.");
-		mysql_close(conn);
-		exit(EXIT_FAILURE);
- 	}
-	mysql_free_result(res);
-
 	while(fgets(line_buffer, sizeof(line_buffer), batch_file) != NULL)
 	{
 		receiver_id = atoi(line_buffer);
@@ -128,13 +113,6 @@ int main(int argc, char **argv) {
 			 exit(EXIT_FAILURE);
 		 }
 		 mysql_free_result(res);
-
-
-		 sprintf(sql_command, "UPDATE tans SET used='1' WHERE user_id = '%d' AND tan = '%s' AND tan_id = '%d'", sender_id, tan, tan_id);
-		 if (mysql_query(conn, sql_command)) {
-			 fprintf(stderr, "%s\n", mysql_error(conn));
-			 exit(1);
-		 }
 
 		 if (amount <= 10000)
 		 {
