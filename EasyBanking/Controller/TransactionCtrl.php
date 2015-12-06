@@ -20,6 +20,11 @@ if (isset($_POST['type'])) {
     } elseif ($type == 'multiple') {
         $tid = $_POST['tid'];
         $tan = $_POST['tan'];
+        $parts = pathinfo($_FILES['batchfile']['name']);
+        if($parts['extension'] != "txt") {
+            echo "ERROR: Wrong file type!";
+            return;
+        }
         if (move_uploaded_file($_FILES['batchfile']['tmp_name'], $uploadFilePath)) {
             $rc = MoneyTransferHandler::parseBatchFile($id, $uploadFilePath, $tid, $tan);
             if ($rc != 0) {
