@@ -4,7 +4,7 @@ require_once('../Model/MoneyTransferHandler.php');
 
 if (isset($_POST['type'])) {
     $id = $_SESSION['iban'];
-    $uploadFilePath = $_SERVER['DOCUMENT_ROOT'] . "/Upload/TransactionBatch_" . $id . ".txt";
+    $uploadFilePath = "/tmp/TransactionBatch_" . $id . ".txt";
     $type = $_POST['type'];
     if ($type == 'single') {
         $iban = $_POST['iban'];
