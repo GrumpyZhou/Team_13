@@ -53,7 +53,7 @@ public class TanCalculator {
 		
 		counter++;
 		byte[] pinDigest;
-		String pinDigestString;
+		String pinDigestString = "";
 		String finalString = "";
 		MessageDigest md;
 		try {
@@ -64,15 +64,18 @@ public class TanCalculator {
 			{
 				md.update(pinDigest);
 				pinDigest = md.digest();
+				System.out.println("Hashed PIN in loop: " + this.bytesToHexString(pinDigest));
+				pinDigestString = bytesToHexString(pinDigest);
+				pinDigest = pinDigestString.getBytes("UTF-8");
+				
 			}
-			pinDigestString = this.bytesToHexString(pinDigest);
 			
 			//Concatenate pin hash with other data and hash it
 			StringBuilder builder = new StringBuilder(pinDigestString);
 			for(int i = 0; i < transferAmount.length; i++)
 			{
-				builder.append(transferAmount[i]);
 				builder.append(targetAccount[i]);
+				//builder.append(transferAmount[i]);
 			}
 			DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 			Date date = new Date();
@@ -83,7 +86,7 @@ public class TanCalculator {
 			e.printStackTrace();
 		}
 		
-		finalString = Integer.toString(counter) + finalString;
+		finalString = Integer.toString(counter) + "+" + finalString;
 		Writer wr;
 		try {
 			wr = new FileWriter("counter");
