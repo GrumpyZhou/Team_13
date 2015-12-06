@@ -13,6 +13,19 @@ $lastname = $_SESSION['lastname'];
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="./main.css">
     <title>EasyBanking-Transaction</title>
+
+    <style id="antiClickjack">body{display:none !important;}</style>
+    <script type="text/javascript">
+        if (self === top)
+        {
+            var antiClickjack = document.getElementById("antiClickjack");
+            antiClickjack.parentNode.removeChild(antiClickjack);
+        }
+        else
+        {
+            top.location = self.location;
+        }
+    </script>
 </head>
 <body>
 
