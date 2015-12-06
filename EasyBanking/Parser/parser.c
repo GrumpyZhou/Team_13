@@ -4,7 +4,8 @@
 #include <mysql.h>
 
 #define EXIT_FAILURE 1
-#define BUFFER_SIZE 50
+#define BUFFER_SIZE 150
+#define DESC_BUFFER_SIZE 100
 #define TAN_SIZE 16
 #define MYSQL_SERVER_ADDRESS "localhost"
 #define MYSQL_USER "root"
@@ -17,6 +18,27 @@ void usage(char **argv)
     exit(EXIT_FAILURE);
 }
 
+struct Description
+{
+    char* startPos;
+    int size;
+};
+
+//returns the string position and size of the description
+struct Description ParseDescription(char* amountPos)
+{
+    struct Description result;
+    char* currPos;
+    for(currPos = amountPos; currPos - amountPos < DESC_BUFFER_SIZE && *currPos != ' '; currPos += 1);
+    result.startPos = currPos + 1;
+    for(currPos = result.startPos; *currPos != '\0'; currPos += 1);
+    result.size = currPos - result.startPos - 1;
+    if(result.size > DESC_BUFFER_SIZE)
+    {
+        exit(1);
+    }
+    return result;
+}
 
 int main(int argc, char **argv) {
 	//Format: <receiver_id> <amount>
@@ -114,13 +136,15 @@ int main(int argc, char **argv) {
 		 }
 		 mysql_free_result(res);
 
+         //get the description
+        struct Description desc = ParseDescription(amount_position);
 		 if (amount <= 10000)
 		 {
-			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved) VALUES ('%d', '%d', '%f', '1')", sender_id, receiver_id, amount);
+			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '1', '%.*s')", sender_id, receiver_id, amount, desc.size, desc.startPos);
 		 }
 		 else
 		 {
-			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved) VALUES ('%d', '%d', '%f', '0')", sender_id, receiver_id, amount);
+			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '0', '%.*s')", sender_id, receiver_id, amount, desc.size, desc.startPos);
 		 }
 		 if (mysql_query(conn, sql_command)) {
 			 fprintf(stderr, "%s\n", mysql_error(conn));
