@@ -10,7 +10,7 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     $lastName = htmlspecialchars($_POST['lname']);
     $password = $_POST['password'];
     $isEmployee = isset($_POST['yes']) ? true : false;
-
+    $email = $_POST['email'];
 
     $result = Account::register($email, $firstName, $lastName, $password, $isEmployee);
     if (is_string($result)) {
@@ -25,3 +25,4 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     echo "Invalid email!";
 
 }
+
