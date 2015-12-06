@@ -15,9 +15,9 @@ div.clear {
 
 div.mainpart {
 
-    margin-left: 20%;
-    margin-right: 20%;
-    width: 60%;
+    margin-left: 18%;
+    margin-right: 18%;
+    width: 64%;
 }
 
 /* ============= Topbar ==============*/
@@ -27,6 +27,7 @@ div.topbar {
     width: 100%;
     height: 50px;
 }
+
 
 div.logo {
     font-family: Constantia-Bold;
@@ -41,6 +42,12 @@ div.logo {
 }
 
 /*Topbar-login form*/
+
+div.innertop {
+    width:  1200px;
+    margin-left: 15%;
+}
+
 div.login {
     float: right;
     margin-right: 26%;
@@ -249,8 +256,13 @@ div.widw {
     border: 1px solid #979797;
     border-radius: 2px;
     /*margin: 20px auto auto auto;*/
-margin: 2% 20% 2% 20%;
+    margin: 2% 20% 2% 20%;
     float: left;
+}
+
+div.wide {
+    width:100%;
+    margin:2% auto 2% auto;
 }
 
 .widw pre {
