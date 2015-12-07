@@ -220,6 +220,7 @@ class RequestHandler {
 			}
 			else
 			{
+				$tans = self::createTans($id);
 				$tanFile = self::CreateTanPDF($tans, $id, $row['password']);
 				self::mailTans($tanFile, $email);
 			}
