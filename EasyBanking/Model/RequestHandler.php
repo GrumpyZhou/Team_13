@@ -1,19 +1,28 @@
 <?php
 include_once "DatabaseHandler.php";
 include_once "MoneyTransferHandler.php";
+include_once "3rd Party/fpdf_protection.php";
 
 class TransactionRequest
 {
     public $date;
+    public $senderName;
     public $senderId;
+    public $destinationName;
+    public $destinationId;
     public $amount;
     public $transactionId;
-    function __construct($date, $sender, $amount, $transactionId)
+    public $description;
+    function __construct($date, $senderName, $senderId, $destinationName, $destinationId, $amount, $transactionId, $description)
     {
         $this->date = $date;
-        $this->senderId = $sender;
+        $this->senderName = $senderName;
+        $this->senderId = $senderId;
+        $this->destinationName = $destinationName;
+        $this->destinationId = $destinationId;
         $this->amount = $amount;
         $this->transactionId = $transactionId;
+        $this->description = $description;
     }
 }
 
@@ -34,6 +43,7 @@ class RequestHandler {
     static private $instance = null;
     static private $tanLength = 15;
     static private $tanCount = 100;
+    static private $outputPathAbs = "/Upload/TanPDF_";
 
     static public function getInstance() {
         if (null === self::$instance) {
@@ -64,6 +74,14 @@ class RequestHandler {
         return $tans;
     }
 
+    private function GetUserName($id)
+    {
+        $dbHandler = DatabaseHandler::getInstance();
+        $row = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $id . "';")->fetch_assoc();
+        $name = $row['first_name'] . " " . $row['last_name'];
+        return $name;
+    }
+
     // $account: Boolean
     // -> If True, the function returns pending registration requests
     // -> If False, the function returns pending transaction requests
@@ -89,25 +107,75 @@ class RequestHandler {
         {
             while($row = $pending->fetch_assoc())
             {
-                $dataArray[] = new TransactionRequest($row['transaction_date'], $row['sender_id'],$row['amount'], $row['id']);
+                $senderId = $row['sender_id'];
+                $senderName = self::GetUserName($senderId);
+                $destId = $row['receiver_id'];
+                $destName = self::GetUserName($destId);
+                $dataArray[] = new TransactionRequest($row['transaction_date'], $senderName, $senderId, $destName, $destId, $row['amount'], $row['id'], $row['description']);
             }
         }
         return $dataArray;
     }
 
+    private function CreateTanPDF($tans, $id, $password)
+    {
+        $outputPath = $_SERVER['DOCUMENT_ROOT'] . self::$outputPathAbs . $id . ".pdf";
+        //TODO: change the password
+        $currPassword = "password";
+        $pdf = new FPDF_Protection();
+        $pdf->SetProtection(array(), $currPassword, $currPassword);
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 10);
+        for($i = 0; $i < self::$tanCount; $i++)
+        {
+            $text = $i . ": " . $tans[$i] . "\n";
+            $pdf->Cell(0, 4, $text, 0, 1);
+        }
+        $pdf->Output($outputPath);
+
+        return $outputPath;
+    }
     // $tans -> Array containing the tans
     // $email -> E-Mail address of the customer as String
-    private function mailTans($tans, $email) {
+    private function mailTans($tanFile, $email) {
         $mailText = "Hello,\nwith this E-Mail we send you your Tans,\nwhich you can use in the future to authenticate yourself,\nin order to perform money transactions:\n\n";
-        for($i = 0; $i < self::$tanCount; $i++) {
-            $mailText .= $i . ": " . $tans[$i] . "\n";
-        }
-        mail($email, "Your personal TAN numbers", $mailText, "From: EasyBanking");
+        $subject = "Your personal TAN numbers";
+        $randomHash = md5(date('r', time()));
+        $fileName = "tanFile.pdf";
+
+        $eol = PHP_EOL;
+        //header
+        $headers = "From: EasyBanking" . $eol;
+        $headers .= "MIME-Version: 1.0" . $eol;
+        $headers .= "Content-Type: multipart/mixed; boundary=\"" . $randomHash . "\"" . $eol . $eol;
+        $headers .= "Content-Transfer-Encoding: 7bit" . $eol;
+        $headers .= "MIME encoded message." . $eol . $eol;
+
+        //message
+        $headers .= "--" . $randomHash . $eol;
+        $headers .= "Content-Type: text/html; charset=\"iso-8859-1\"" . $eol;
+        $headers .= "Content-Transfer-Encoding: 8bit" . $eol . $eol;
+        $headers .= $mailText .$eol . $eol;
+
+        //read attachement , encode and split it
+        $file = fopen($tanFile, 'rb');
+        $data = chunk_split(base64_encode(fread($file, filesize($tanFile))));
+        fclose($file);
+
+        //attachement
+        $headers .= "--" . $randomHash . $eol;
+        $headers .= "Content-Type: application/octet-stream; name=\"" . $fileName . "\"" . $eol;
+        $headers .= "Content-Transfer-Encoding: base64" . $eol;
+        $headers .= "Content-Disposition: attachemenet" . $eol . $eol;
+        $headers .= $data .$eol .$eol;
+        $headers .= "--" . $randomHash . "--";
+
+        mail($email, $subject, "", $headers);
     }
-    
+
     // $email -> E-Mail address of the customer as String
     private function mailSCS($email) {
-        $mailText = "Hello,\nyou have been approved at EasyBanking.\nYou can download the SCS at our web page\nin order to perform money transactions.\n\n";
+        $mailText = "Hello,\nyou have been approved at EasyBanking.\nYou can download the SCS at our home page\nin order to perform money transactions.\n\n";
         mail($email, "Your account at EasyBanking", $mailText, "From: EasyBanking");
     }
 
@@ -152,12 +220,12 @@ class RequestHandler {
 			}
 			else
 			{
-				$tans = self::createTans($id);
-				self::mailTans($tans, $email);
+				$tanFile = self::CreateTanPDF($tans, $id, $row['password']);
+				self::mailTans($tanFile, $email);
 			}
 
             $balance = floatval($startBalance);
-            $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' WHERE user_id='" . $id . "';"); 
+            $dbHandler->execQuery("UPDATE accounts SET balance='" . $balance . "' WHERE user_id='" . $id . "';");
         }
     }
 
@@ -180,7 +248,6 @@ class RequestHandler {
             $dbHandler->execQuery("DELETE FROM accounts WHERE user_id='" .$id. "';");
             $dbHandler->execQuery("DELETE FROM scs WHERE user_id='" .$id. "';");
         }
-        
     }
 }
 ?>

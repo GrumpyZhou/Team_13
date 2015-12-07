@@ -13,12 +13,14 @@
 
 <div class="topbar">
     <div class="logo">EasyBanking</div>
-    <div class="login">
-        <form action="../Controller/LoginCtrl.php" method="post">
-            <label>Email</label><input type="email" name="email" required/>
-            <label>Password</label><input type="password" name="password" required/>
-            <input type="submit" class="barbtn" value="Log In"/>
-        </form>
+    <div class="innertop">
+        <div class="login">
+            <form action="../Controller/LoginCtrl.php" method="post">
+                <label>Email</label><input type="email" name="email" required/>
+                <label>Password</label><input type="password" name="password" required/>
+                <input type="submit" class="barbtn" value="Log In"/>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -66,6 +68,7 @@
                     </td>
                 </tr>
                 <tr>
+                <tr>
                     <td colspan="2"><input class="barbtn" type="submit" value="Register"/></td>
                 </tr>
             </table>
@@ -76,8 +79,8 @@
     <div class="widw">
         <div class="titbg"><span>Password Recovery</span></div>
         <form class="pwdrec" action="../Controller/PwdRecoveryCtrl.php" method="post">
-            <label id="lshort">   Email</label> <input class='pwdinput' type="email" name="email" required/>
-            <input id='pwdbtn'class="barbtn" type="submit" value="Send Token"/>
+            <label id="lshort"> Email</label> <input class='pwdinput' type="email" name="email" required/>
+            <input id='pwdbtn' class="barbtn" type="submit" value="Send Token"/>
         </form>
     </div>
 </div>
