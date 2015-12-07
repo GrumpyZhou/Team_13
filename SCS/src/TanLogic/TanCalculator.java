@@ -47,9 +47,7 @@ public class TanCalculator {
 	    	{
 	    	     counter = scanner.nextInt();
 	    	}
-		} catch (FileNotFoundException e) {
-			System.out.println("No counter file found. Starting at 0.");
-		}
+		} catch (FileNotFoundException ignored) {	}
 		
 		counter++;
 		byte[] pinDigest;
@@ -64,7 +62,6 @@ public class TanCalculator {
 			{
 				md.update(pinDigest);
 				pinDigest = md.digest();
-				System.out.println("Hashed PIN in loop: " + this.bytesToHexString(pinDigest));
 				pinDigestString = bytesToHexString(pinDigest);
 				pinDigest = pinDigestString.getBytes("UTF-8");
 				
