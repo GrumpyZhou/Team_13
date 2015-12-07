@@ -3,6 +3,12 @@ session_start();
 require_once('../Model/PWDSecHandler.php');
 
 
+//  url: e.g "http://localhost/Controller/PwdRecoveryCtrl.php/id/token";
+
+$uri=parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$param=explode("/",$uri);
+
+//step 1. get user email and send token
 if (isset($_POST['email'])) {
     $email = $_POST['email'];
     $urlprefix="http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
@@ -15,15 +21,27 @@ if (isset($_POST['email'])) {
     }
 }
 
-//  uri :  /id/token
-$uri=basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-if(isset($uri)){
-    $param=explode("/",$uri);
-    if(PWDSecHandler::authenticateToken($param[0],$param[1])){
-        $_SESSION['resetpwd_user']=$param[0];
+//step 2. check the token and redirect to the reset page
+if(sizeof($param)>3){
+    if(PWDSecHandler::authenticateToken($param[3],$param[4])){
+        //if the user is authenticated
+        $_SESSION['resetpwd_user']=$param[3];
+        echo 'userid: '.$param[3]." token ".$param[4];
         header("Location:../View/pwdreset.php");
     }else{
-        header("Location:../View/administration.php");
+        $_SESSION['resetpwd_result']='Fail to recover the password!!';
+        header("Location:../View/index.php");
     }
 }
+
+//step 3. reset the password
+if(isset($_POST['newpwd'])){
+    $newpwd=$_POST['newpwd'];
+    PWDSecHandler::resetPwd($_POST['uid'],$newpwd);
+    echo 'password has been updated successfully!';
+    echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
+}
+
+
+
 
