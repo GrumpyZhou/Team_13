@@ -2,6 +2,7 @@
 include_once "DatabaseHandler.php";
 include_once "MoneyTransferHandler.php";
 include_once "3rd Party/fpdf_protection.php";
+include_once "Account.php";
 
 class TransactionRequest
 {
@@ -120,8 +121,11 @@ class RequestHandler {
     private function CreateTanPDF($tans, $id, $password)
     {
         $outputPath = $_SERVER['DOCUMENT_ROOT'] . self::$outputPathAbs . $id . ".pdf";
-        //TODO: change the password
-        $currPassword = "password";
+        
+        $dbHandler = $dbHandler = DatabaseHandler::getInstance();
+        $row = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $id . "';")->fetch_assoc();
+        $hashedPassword = $row['password'];
+        $currPassword = Account::CalcPDFPassword($hashedPassword);
         $pdf = new FPDF_Protection();
         $pdf->SetProtection(array(), $currPassword, $currPassword);
         $pdf->AddPage();
@@ -252,4 +256,5 @@ class RequestHandler {
     }
 }
 ?>
+
 

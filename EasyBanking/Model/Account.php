@@ -42,7 +42,13 @@ abstract class Account
     }
 
     //abstract public function logout(); //TODO: Validate whether this method is necessary
-
+	
+	public static function CalcPDFPassword($hashedPassword)
+	{
+		$doubleHash = self::calculateHash($hashedPassword);
+		return substr($doubleHash, 0, 10);
+	}
+	
     // Returns TRUE if the registration was successfull
     // Otherwise returns a String containing an error message
     public static function register($email, $firstName, $lastName, $password, $isEmployee, $usesSCS)
@@ -109,6 +115,10 @@ abstract class Account
             }
             return "You have registered successfully! Your SCS PIN is " . $pin_string . "! Please remember or save it somewhere save NOW. It will not be shown again!";
         }
+        else
+        {
+			return "You have registered successfully! Your PDF password is " . self::CalcPDFPassword(self::calculateHash($password)) . " ! Please remember or save it now. It will not be shown again!";
+		}
         return TRUE;
     }
 
@@ -119,3 +129,4 @@ abstract class Account
 }
 
 ?>
+
