@@ -4,7 +4,6 @@ if (!isset($_SESSION['resetpwd_user'])){
     header("Location:../View/index.php");
 } else {
     $id = $_SESSION['resetpwd_user'];
-
 }
 ?>
 <!DOCTYPE html>
@@ -33,7 +32,7 @@ if (!isset($_SESSION['resetpwd_user'])){
     <div class="widw">
         <div class="titbg"><span>Reset Password</span></div>
         <form class="pwdrec" action="../Controller/PwdRecoveryCtrl.php" method="post">
-            <label id="llong">New Password</label> <input class='pwdinput' type="password" name="npwd" required/>
+            <label id="llong">New Password</label> <input class='pwdinput' type="password" name="newpwd" required/>
             <input id='pwdbtn'class="barbtn" type="submit" value="Confirm"/>
             <input type="hidden" name="uid" value="<? echo $id; ?>"/>
         </form>
