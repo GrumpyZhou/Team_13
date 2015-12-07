@@ -29,7 +29,8 @@ class DatabaseHandler {
         if($this->connected == FALSE && $this->connectToDB() == FALSE) {
             return;
         }
-        $result = $this->mysqlConnection->query($query);
+        $safe_query=mysql_real_escape_string($query);
+        $result = $this->mysqlConnection->query($safe_query);
         return $result;
     }
 }
