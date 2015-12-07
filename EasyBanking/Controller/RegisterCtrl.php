@@ -6,10 +6,10 @@ require_once('../Model/Account.php');
 if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 
     //remove html special characters before store the data.
-    $firstName = htmlspecialchars($_POST['fname']);
-    $lastName = htmlspecialchars($_POST['lname']);
-    $password = $_POST['password'];
-    $email = $_POST['email'];
+    $firstName = htmlentities( strip_tags ($_POST['fname']));
+    $lastName = htmlentities( strip_tags ($_POST['lname']));
+    $password = htmlentities( strip_tags ($_POST['password']));
+    $email = htmlentities( strip_tags ($_POST['email']));
     $isEmployee = isset($_POST['yes']) ? true : false;
     $usesSCS = false;
     if (isset($_POST['tan_method']) and $_POST['tan_method'] == 'SCS')

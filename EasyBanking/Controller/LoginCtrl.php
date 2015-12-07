@@ -5,8 +5,9 @@ require_once('../Model/PWDSecHandler.php');
 
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    
+    $email = htmlentities( strip_tags ($_POST['email']));
+    $password = htmlentities( strip_tags ($_POST['password']));
     $isLocked = PWDSecHandler::isLocked($email);
 
     if ($isLocked === NULL) {
