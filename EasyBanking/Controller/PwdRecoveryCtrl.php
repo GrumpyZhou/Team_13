@@ -14,10 +14,10 @@ if (isset($_POST['email'])) {
     $urlprefix="http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     echo 'current url: '.$urlprefix;
     if (PWDSecHandler::handlePWDRecovery($email,$urlprefix)) {
-
-       echo 'Failed to handle the password recovery';
+        echo 'Token has been successfully sent to your email address, please check it.';
+        echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
     }else{
-        echo 'Email has been successfully sent!';
+        echo 'Failed to handle the password recovery';
     }
 }
 
