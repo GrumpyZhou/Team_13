@@ -12,7 +12,6 @@ $param=explode("/",$uri);
 if (isset($_POST['email'])) {
     $email = $_POST['email'];
     $urlprefix="http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-    echo 'current url: '.$urlprefix;
     if (PWDSecHandler::handlePWDRecovery($email,$urlprefix)) {
         echo 'Token has been successfully sent to your email address, please check it.';
         echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
@@ -26,11 +25,11 @@ if(sizeof($param)>3){
     if(PWDSecHandler::authenticateToken($param[3],$param[4])){
         //if the user is authenticated
         $_SESSION['resetpwd_user']=$param[3];
-        echo 'userid: '.$param[3]." token ".$param[4];
-        header("Location:../View/pwdreset.php");
+       //echo 'userid: '.$param[3]." token ".$param[4];
+        header("Location:../../../View/pwdreset.php");
     }else{
         $_SESSION['resetpwd_result']='Fail to recover the password!!';
-        header("Location:../View/index.php");
+        header("Location:../../../View/index.php");
     }
 }
 

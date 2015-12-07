@@ -60,7 +60,6 @@ class PWDSecHandler
         //update the token in DB and give it 5-min valid duration
         $dbHandler->execQuery("UPDATE " . self::$table . " SET token='" . $token . "', valid_until=DATE_ADD(now(), INTERVAL 5 MINUTE)  WHERE id='" . $id . "';");
         $mailText = "Hello,\nPlease click the URL to change your password\n\n" . $urlprefix . "/" . $id . "/" . $token . "\nNote it is valid ONLY within 5mins!";
-        echo 'Mail content: ' . $mailText;
         return mail($email, "Token", $mailText, "From: EasyBanking");
     }
 
