@@ -22,7 +22,11 @@ class MoneyTransferHandler {
 
     static private function changeBalance($amount, $user_id)
     {
-        $dbHandler = DatabaseHandler::getInstance();
+		$amount=mysql_real_escape_string($amount);
+		$user_id=mysql_real_escape_string($user_id);
+
+
+		$dbHandler = DatabaseHandler::getInstance();
         $userQuery = "WHERE user_id='" . $user_id . "';";
         $res = $dbHandler->execQuery("SELECT * FROM accounts " .$userQuery);
         $row = $res->fetch_assoc();
@@ -34,6 +38,7 @@ class MoneyTransferHandler {
     // Returns the exit code of the executed command.
     static public function parseBatchFile($senderId, $filePath, $tanId, $tan)
     {
+
 		if(self::checkTAN($filePath, $senderId, $tan, $tanId) == FALSE)
 		{
 			return "Invalid TAN";
@@ -44,6 +49,12 @@ class MoneyTransferHandler {
     
     static public function checkTAN($batchFilePath, $senderId, $tan, $tanId)
     {
+
+		$senderId=mysql_real_escape_string($senderId);
+		$tan=mysql_real_escape_string($tan);
+		$tanId=mysql_real_escape_string($tanId);
+		$batchFilePath=mysql_real_escape_string($batchFilePath);
+
 		$dbHandler = DatabaseHandler::getInstance();
 		$res = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $senderId . "';");
 		$row = $res->fetch_assoc();
@@ -129,7 +140,13 @@ class MoneyTransferHandler {
     //$receiver: user id of the receiver
     static public function transferMoney($source, $receiver, $amount, $tan, $tanId, $description, $filePath)
     {
-        $transData = $receiver . " " . $amount . " " . $description ."\n";
+		$receiver=mysql_real_escape_string($receiver);
+		$amount=mysql_real_escape_string($amount);
+		$description=mysql_real_escape_string($description);
+		$filePath=mysql_real_escape_string($filePath);
+
+
+		$transData = $receiver . " " . $amount . " " . $description ."\n";
 
         //create batch file
         if(!self::createTransferBatchFile($filePath, $transData))

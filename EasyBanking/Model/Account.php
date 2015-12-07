@@ -14,6 +14,7 @@ abstract class Account
     // Otherwise, the NULL reference is returned.
     public static function login($email, $password)
     {
+        $email=mysql_real_escape_string($email);
         $dbHandler = DatabaseHandler::getInstance();
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         $row = $res->fetch_assoc();
@@ -53,6 +54,10 @@ abstract class Account
     // Otherwise returns a String containing an error message
     public static function register($email, $firstName, $lastName, $password, $isEmployee, $usesSCS)
     {
+        $email=mysql_real_escape_string($email);
+        $firstName=mysql_real_escape_string($firstName);
+        $lastName=mysql_real_escape_string($lastName);
+
         $dbHandler = DatabaseHandler::getInstance();
         $res = $dbHandler->execQuery("SELECT * FROM users WHERE mail_address='" . $email . "';");
         if ($res->fetch_assoc() != NULL) {

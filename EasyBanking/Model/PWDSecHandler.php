@@ -28,6 +28,7 @@ class PWDSecHandler
      */
     public static function  handlePWDRecovery($email, $urlprefix)
     {
+        $email=mysql_real_escape_string($email);
 
         //check whether the user email address exists
         $dbHandler = DatabaseHandler::getInstance();
