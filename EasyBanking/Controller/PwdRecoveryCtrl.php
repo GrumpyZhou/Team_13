@@ -10,7 +10,7 @@ $param=explode("/",$uri);
 
 //step 1. get user email and send token
 if (isset($_POST['email'])) {
-    $email = $_POST['email'];
+    $email = htmlentities( strip_tags ($_POST['email']));
     $urlprefix="http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     if (PWDSecHandler::handlePWDRecovery($email,$urlprefix)) {
         echo 'Token has been successfully sent to your email address, please check it.';

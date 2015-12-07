@@ -7,11 +7,11 @@ if (isset($_POST['type'])) {
     $uploadFilePath = "/tmp/TransactionBatch_" . $id . ".txt";
     $type = $_POST['type'];
     if ($type == 'single') {
-        $iban = $_POST['iban'];
-        $amount = $_POST['amount'];
-        $tid = $_POST['tid'];
-        $tan = $_POST['tan'];
-        $description = $_POST['description'];
+        $iban = htmlentities( strip_tags ($_POST['iban']));
+        $amount = htmlentities( strip_tags ($_POST['amount']));
+        $tid = htmlentities( strip_tags ($_POST['tid']));
+        $tan = htmlentities( strip_tags ($_POST['tan']));
+        $description = htmlentities( strip_tags ($_POST['description']));
         $rc = MoneyTransferHandler::transferMoney($id, $iban, $amount, $tan, $tid, $description, $uploadFilePath);
         if ($rc != 0) {
             echo "ERROR: Transfer could not be processed! Error Code: $rc";
