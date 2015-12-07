@@ -44,7 +44,7 @@ class RequestHandler {
     static private $instance = null;
     static private $tanLength = 15;
     static private $tanCount = 100;
-    static private $outputPathAbs = "/Upload/TanPDF_";
+    static private $outputPathAbs = "TanPDF_";
 
     static public function getInstance() {
         if (null === self::$instance) {
@@ -120,7 +120,7 @@ class RequestHandler {
 
     private function CreateTanPDF($tans, $id, $password)
     {
-        $outputPath = $_SERVER['DOCUMENT_ROOT'] . self::$outputPathAbs . $id . ".pdf";
+        $outputPath = "/tmp/" . self::$outputPathAbs . $id . ".pdf";
         
         $dbHandler = $dbHandler = DatabaseHandler::getInstance();
         $row = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $id . "';")->fetch_assoc();
@@ -256,5 +256,6 @@ class RequestHandler {
     }
 }
 ?>
+
 
 
