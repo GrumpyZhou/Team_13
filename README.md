@@ -19,4 +19,4 @@ FromLineOverride=YES
 To compile the Batch Parser, cd into the Parser source code directory and execute make.
 The Batch Parser then has to be installed in a directory contained in the PATH variable (e.g. "/usr/local/bin/"), with the name "parseBatchFile".
 
-Also, in the DOCUMENT_ROOT of the Apache server, a folder named "Upload" has to be created, which has to be completely accessible for the Apache server (read and write access).
+Also, the "/tmp" directory has to be completely accessible for the Apache server (read and write access).
