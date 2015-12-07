@@ -13,7 +13,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         super.setTitle(windowTitle);
-        super.setSize(400, 170);
+        super.setSize(600, 170);
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         super.setLocation((int) (screenSize.getWidth()*0.1), (int) (screenSize.getHeight()*0.1));
         super.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
