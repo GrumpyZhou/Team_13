@@ -93,7 +93,7 @@ $email = $_SESSION['email'];
 
 
         <div id="pdf" class="transhis">
-            <div class="widw">
+            <div class="widw wide">
                 <div class="titbg"><span>Transaction History</span></div>
     <pre>
         <span><? echo $firstname . " " . $lastname; ?></span>

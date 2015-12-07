@@ -94,6 +94,7 @@ class PWDSecHandler
     /*
      * Section 2: functions for handle the login lock out
      */
+
     
     /**
      * @param $email

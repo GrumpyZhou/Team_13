@@ -56,7 +56,7 @@ $lastname = $_SESSION['lastname'];
     <div class="banner">
         <h1>Welcome  <? echo $firstname . " " . $lastname ?>!</h1>
     </div>
-    <div class="widw">
+    <div class="widw ">
         <div class="titbg"><span>Single Transaction</span></div>
         <!-- Single Transaction Form -->
         <form class="transfer" action="../Controller/TransactionCtrl.php" method="post">
