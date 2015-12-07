@@ -40,7 +40,7 @@ class PWDSecHandler
         } else {
             $id = $row['id'];
             //send the token to the email address
-           self::sendTokenURL($id, $email, $urlprefix);
+            self::sendTokenURL($id, $email, $urlprefix);
             return true;
         }
 
@@ -94,8 +94,7 @@ class PWDSecHandler
     /*
      * Section 2: functions for handle the login lock out
      */
-
-
+    
     /**
      * @param $email
      * @return bool|null
@@ -111,12 +110,10 @@ class PWDSecHandler
             return NULL;
         } else {
             $id = $row['id'];
-            //check whether should the account been unlocked ???
-            $dbHandler->execQuery("UPDATE ".self::$table." SET failed_login_attempt=0 WHERE failed_login_attempt>3 and locked_until-now()<0 and id='" . $id . "';");
-            $res = $dbHandler->execQuery("SELECT locked_until FROM " . self::$table . " WHERE failed_login_attempt>3 and locked_until-now()>0 and id='" . $id . "' ;");
+            //check whether she is still locked
+            $res = $dbHandler->execQuery("SELECT locked_until FROM " . self::$table . " WHERE locked_until-now()>0 and id='" . $id . "' ;");
             $row = $res->fetch_assoc();
             if ($row == NULL) {
-                echo "Not Locked";
                 return false;
             } else {
                 $locked_until = $row['locked_until'];
@@ -125,9 +122,9 @@ class PWDSecHandler
         }
     }
 
-
     /**
      * @param $email
+     * @return string
      */
     public static function incFailedAtmp($email)
     {
@@ -135,21 +132,20 @@ class PWDSecHandler
         $query = "SELECT id FROM users WHERE mail_address='" . $email . "';";
         $res = $dbHandler->execQuery($query);
         $row = $res->fetch_assoc();
-        if ($row == NULL) {
-            echo "Wrong User email address.";
+        $id = $row['id'];
+
+        //check whether the user has exceed the login limit but not locked yet
+        $res = $dbHandler->execQuery("SELECT * FROM " . self::$table . " WHERE failed_login_attempt>=2 and  locked_until-now()<0 and id='" . $id . "' ;");
+        $row = $res->fetch_assoc();
+
+        if ($row != NULL) {
+            //lock the user and recount the failed attempt
+            $dbHandler->execQuery("UPDATE " . self::$table . " SET failed_login_attempt=0, locked_until=DATE_ADD(now(), INTERVAL 10 MINUTE)  WHERE failed_login_attempt>=2 and id='" . $id . "';");
+            return 'You have failed to login for 3 times. You are now locked!';
         } else {
-            $id = $row['id'];
-            $dbHandler->execQuery("UPDATE ".self::$table." SET failed_login_attempt=failed_login_attempt+1 WHERE id='" . $id . "';");
-
-            //check whether the user has exceed the login limit but not locked yet
-            $res = $dbHandler->execQuery("SELECT * FROM " . self::$table . " WHERE failed_login_attempt>3 and  locked_until-now()<0 and id='" . $id . "' ;");
-            $row = $res->fetch_assoc();
-            if ($row != NULL) {
-                echo 'locking user ' . $id . ' who has failed login  ' . $row['failed_login_attempt'] . 'times';
-                $dbHandler->execQuery("UPDATE ".self::$table." SET locked_until=DATE_ADD(now(), INTERVAL 10 MINUTE)  WHERE failed_login_attempt>3 and id='" . $id . "';");
-
-            }
-
+            //just increase the failed_login_attempt
+            $dbHandler->execQuery("UPDATE " . self::$table . " SET failed_login_attempt=failed_login_attempt+1 WHERE id='" . $id . "';");//increase failed attempt
+            return 'Login Failed.';
         }
     }
 
@@ -164,7 +160,7 @@ class PWDSecHandler
         $row = $res->fetch_assoc();
         if ($row != NULL) {
             $id = $row['id'];
-            $dbHandler->execQuery("UPDATE ".self::$table." SET failed_login_attempt=0 WHERE id='" . $id . "';");
+            $dbHandler->execQuery("UPDATE " . self::$table . " SET failed_login_attempt=0 WHERE id='" . $id . "';");
         }
     }
 }
