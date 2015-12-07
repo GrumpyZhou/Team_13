@@ -37,13 +37,14 @@ CREATE TABLE transactions (
 	);
 
 CREATE TABLE passwdsec (
-	user_id INT NOT NULL,
-	token CHAR(64) NOTNULL, 
-	token_valid_time TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	failed_login_attempt INT NOT NULL,
-	locked_time TIMESTAMP,
-	PRIMARY KEY (user_id)
+	id INT NOT NULL,
+	token CHAR(64) NULL,
+	valid_until TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	failed_login_attempt INT(5) NOT NULL DEFAULT 0,
+	locked_until timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+	PRIMARY KEY (id)
  	);
+
  	
 CREATE TABLE scs (
 	user_id INT NOT NULL,
