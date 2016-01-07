@@ -1,0 +1,46 @@
+STANDARD: Potentially Unsafe Code - fopen
+Line: 60 - E:\Phase 4\parser.c
+Function used to open file. Carry out a manual check to ensure that user cannot modify filename for malicious purposes and that file is not 'opened' more than once simultaneously.
+	batch_file = fopen (argv[4],"r");
+
+MEDIUM: Potentially Unsafe Code - memcpy
+Line: 67 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions and other memory mis-management situations.
+	memcpy(tan, argv[3], 15);
+
+CRITICAL: Potentially Unsafe Code - Unsafe Use of memcpy Allows Buffer Overflow
+Line: 67 - E:\Phase 4\parser.c
+The size limit is larger than the destination buffer, while the source is a user-supplied string from the commandline, and so could allow a buffer overflow to take place.
+	memcpy(tan, argv[3], 15);
+
+MEDIUM: Potentially Unsafe Code - sprintf
+Line: 106 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate format string bugs.
+		 sprintf(sql_command, "SELECT * FROM users WHERE id = '%d'", receiver_id);
+
+MEDIUM: Potentially Unsafe Code - sprintf
+Line: 123 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate format string bugs.
+		 sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", sender_id, amount);
+
+MEDIUM: Potentially Unsafe Code - sprintf
+Line: 143 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate format string bugs.
+			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '1', '%.*s')", sender_id, receiver_id, amount, desc.size, desc.startPos);
+
+MEDIUM: Potentially Unsafe Code - sprintf
+Line: 147 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate format string bugs.
+			 sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '0', '%.*s')", sender_id, receiver_id, amount, desc.size, desc.startPos);
+
+MEDIUM: Potentially Unsafe Code - sprintf
+Line: 157 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate format string bugs.
+			 sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", amount, sender_id);
+
+MEDIUM: Potentially Unsafe Code - sprintf
+Line: 164 - E:\Phase 4\parser.c
+Function appears in Microsoft's banned function list. Can facilitate format string bugs.
+			 sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = '%d'", amount, receiver_id);
+
+

@@ -1,0 +1,89 @@
+Flawfinder version 1.27, (C) 2001-2004 David A. Wheeler.
+Number of dangerous functions in C/C++ ruleset: 160
+Examining refactoredParser.c
+refactoredParser.c:744:  [4] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination.
+  Consider using strncpy or strlcpy (warning, strncpy is easily misused). 
+refactoredParser.c:754:  [4] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination.
+  Consider using strncpy or strlcpy (warning, strncpy is easily misused). 
+refactoredParser.c:764:  [4] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination.
+  Consider using strncpy or strlcpy (warning, strncpy is easily misused). 
+refactoredParser.c:18:  [2] (buffer) char:
+  Statically-sized arrays can be overflowed. Perform bounds checking,
+  use functions that limit length, or ensure that the size is larger than
+  the maximum possible length. 
+refactoredParser.c:26:  [2] (buffer) char:
+  Statically-sized arrays can be overflowed. Perform bounds checking,
+  use functions that limit length, or ensure that the size is larger than
+  the maximum possible length. 
+refactoredParser.c:676:  [2] (buffer) char:
+  Statically-sized arrays can be overflowed. Perform bounds checking,
+  use functions that limit length, or ensure that the size is larger than
+  the maximum possible length. 
+refactoredParser.c:683:  [2] (buffer) char:
+  Statically-sized arrays can be overflowed. Perform bounds checking,
+  use functions that limit length, or ensure that the size is larger than
+  the maximum possible length. 
+refactoredParser.c:690:  [2] (buffer) char:
+  Statically-sized arrays can be overflowed. Perform bounds checking,
+  use functions that limit length, or ensure that the size is larger than
+  the maximum possible length. 
+refactoredParser.c:704:  [2] (buffer) char:
+  Statically-sized arrays can be overflowed. Perform bounds checking,
+  use functions that limit length, or ensure that the size is larger than
+  the maximum possible length. 
+refactoredParser.c:910:  [2] (misc) fopen:
+  Check when opening files - can an attacker redirect it (via symlinks),
+  force the opening of special file type (e.g., device files), move
+  things around to create a race condition, control its ancestors, or change
+  its contents?. 
+refactoredParser.c:926:  [2] (integer) atoi:
+  Unless checked, the resulting number can exceed the expected range. 
+  If source untrusted, check both minimum and maximum, even if the input
+  had no minus sign (large numbers can roll over into negative number;
+  consider saving to an unsigned value if that is intended). 
+refactoredParser.c:927:  [2] (integer) atoi:
+  Unless checked, the resulting number can exceed the expected range. 
+  If source untrusted, check both minimum and maximum, even if the input
+  had no minus sign (large numbers can roll over into negative number;
+  consider saving to an unsigned value if that is intended). 
+refactoredParser.c:927:  [2] (integer) atoi:
+  Unless checked, the resulting number can exceed the expected range. 
+  If source untrusted, check both minimum and maximum, even if the input
+  had no minus sign (large numbers can roll over into negative number;
+  consider saving to an unsigned value if that is intended). 
+refactoredParser.c:1042:  [2] (integer) atoi:
+  Unless checked, the resulting number can exceed the expected range. 
+  If source untrusted, check both minimum and maximum, even if the input
+  had no minus sign (large numbers can roll over into negative number;
+  consider saving to an unsigned value if that is intended). 
+refactoredParser.c:1043:  [2] (integer) atoi:
+  Unless checked, the resulting number can exceed the expected range. 
+  If source untrusted, check both minimum and maximum, even if the input
+  had no minus sign (large numbers can roll over into negative number;
+  consider saving to an unsigned value if that is intended). 
+refactoredParser.c:1043:  [2] (integer) atoi:
+  Unless checked, the resulting number can exceed the expected range. 
+  If source untrusted, check both minimum and maximum, even if the input
+  had no minus sign (large numbers can roll over into negative number;
+  consider saving to an unsigned value if that is intended). 
+refactoredParser.c:362:  [1] (buffer) strncpy:
+  Easily used incorrectly; doesn't always \0-terminate or check for
+  invalid pointers. 
+refactoredParser.c:461:  [1] (buffer) strncpy:
+  Easily used incorrectly; doesn't always \0-terminate or check for
+  invalid pointers. 
+refactoredParser.c:923:  [1] (buffer) fgetc:
+  Check buffer boundaries if used in a loop. 
+
+Hits = 19
+Lines analyzed = 1072 in 0.52 seconds (58859 lines/second)
+Physical Source Lines of Code (SLOC) = 964
+Hits@level = [0]   0 [1]   3 [2]  13 [3]   0 [4]   3 [5]   0
+Hits@level+ = [0+]  19 [1+]  19 [2+]  16 [3+]   3 [4+]   3 [5+]   0
+Hits/KSLOC@level+ = [0+] 19.7095 [1+] 19.7095 [2+] 16.5975 [3+] 3.11203 [4+] 3.11203 [5+]   0
+Minimum risk level = 1
+Not every hit is necessarily a security vulnerability.
+There may be other security vulnerabilities; review your code!

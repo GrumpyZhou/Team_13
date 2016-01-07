@@ -1,0 +1,66 @@
+STANDARD: Potentially Unsafe Code - strncpy
+Line: 362 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions. While 'safer', the current "n" functions include non-null termination of overflowed buffers and no error returns on overflow.
+				strncpy(str_data_TransCode, sourceString, 256);
+
+STANDARD: Potentially Unsafe Code - strncpy(
+Line: 362 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions. While 'safer', the current "n" functions include non-null termination of overflowed buffers and no error returns on overflow.
+				strncpy(str_data_TransCode, sourceString, 256);
+
+CRITICAL: Potentially Unsafe Code - Unsafe Use of strncpy Allows Buffer Overflow
+Line: 362 - E:\Phase 4\refactoredParser.c
+The size limit is larger than the destination buffer, while the source is a char* and so, could allow a buffer overflow to take place.
+				strncpy(str_data_TransCode, sourceString, 256);
+
+STANDARD: Potentially Unsafe Code - strncpy
+Line: 461 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions. While 'safer', the current "n" functions include non-null termination of overflowed buffers and no error returns on overflow.
+				strncpy(str_data_TransCode, code, 256);
+
+STANDARD: Potentially Unsafe Code - strncpy(
+Line: 461 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions. While 'safer', the current "n" functions include non-null termination of overflowed buffers and no error returns on overflow.
+				strncpy(str_data_TransCode, code, 256);
+
+CRITICAL: Potentially Unsafe Code - Unsafe Use of strncpy Allows Buffer Overflow
+Line: 461 - E:\Phase 4\refactoredParser.c
+The size limit is larger than the destination buffer, while the source is a char* and so, could allow a buffer overflow to take place.
+				strncpy(str_data_TransCode, code, 256);
+
+MEDIUM: Potentially Unsafe Code - strcpy
+Line: 744 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions.
+				strcpy(str_data_Transaction[0], customerName);
+
+MEDIUM: Potentially Unsafe Code - strcpy(
+Line: 744 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions.
+				strcpy(str_data_Transaction[0], customerName);
+
+MEDIUM: Potentially Unsafe Code - strcpy
+Line: 754 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions.
+				strcpy(str_data_Transaction[1], receiverName); 
+
+MEDIUM: Potentially Unsafe Code - strcpy(
+Line: 754 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions.
+				strcpy(str_data_Transaction[1], receiverName); 
+
+MEDIUM: Potentially Unsafe Code - strcpy
+Line: 764 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions.
+				strcpy(str_data_Transaction[2], description);
+
+MEDIUM: Potentially Unsafe Code - strcpy(
+Line: 764 - E:\Phase 4\refactoredParser.c
+Function appears in Microsoft's banned function list. Can facilitate buffer overflow conditions.
+				strcpy(str_data_Transaction[2], description);
+
+STANDARD: Potentially Unsafe Code - fopen
+Line: 910 - E:\Phase 4\refactoredParser.c
+Function used to open file. Carry out a manual check to ensure that user cannot modify filename for malicious purposes and that file is not 'opened' more than once simultaneously.
+	pFile = fopen(fileName, "r");
+
+
