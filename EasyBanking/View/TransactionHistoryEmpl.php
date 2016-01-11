@@ -1,10 +1,10 @@
 <?php
 include_once "../Model/TransactionHistory.php";
 
-$id = $_POST['iban'];
-$firstName = $_POST['firstName'];
-$lastName = $_POST['lastName'];
-$balance = $_POST['balance'];
+$id = htmlentities($_POST['iban']);
+$firstName = htmlentities($_POST['firstName']);
+$lastName = htmlentities($_POST['lastName']);
+$balance = htmlentities($_POST['balance']);
 ?>
 
 <!DOCTYPE html>
