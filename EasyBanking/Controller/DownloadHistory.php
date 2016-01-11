@@ -8,7 +8,7 @@ if(isset($_SESSION['isEmployee'])) {
 		$id = $_SESSION['iban'];
 	} else {
 		if(isset($_POST['iban'])) {
-			$id = $_POST['iban'];
+			$id = intval($_POST['iban']);
 		} else {
 			exit;
 		}
