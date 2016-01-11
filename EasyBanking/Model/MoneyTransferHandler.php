@@ -43,7 +43,12 @@ class MoneyTransferHandler {
 		{
 			return "Invalid TAN";
 		}
-        exec("parseBatchFile $senderId $tanId \"$tan\" \"$filePath\"", $output, $rc);
+		$senderId = escapeshellarg($senderId);
+		$tanId = escapeshellarg($tanId);
+		$tan = escapeshellarg($tan);
+		$filePath = escapeshellarg($filePath);
+		error_log("Parser command: " . "parseBatchFile $senderId $tanId $tan $filePath");
+        exec("parseBatchFile $senderId $tanId $tan $filePath", $output, $rc);
         return $rc;
     }
     
