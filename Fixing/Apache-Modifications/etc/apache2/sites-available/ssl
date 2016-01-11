@@ -16,6 +16,7 @@
     <Directory /var/www/View>
    	allow from all
     </Directory>
+    Header always append X-Frame-Options DENY
 </VirtualHost>
 
 <Location />
