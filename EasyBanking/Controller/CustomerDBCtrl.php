@@ -1,5 +1,14 @@
 <?php
+session_start();
 include_once "../Model/DatabaseHandler.php";
+
+if (isset($_SESSION['isEmployee'])) {
+    if($_SESSION['isEmployee'] == false) {
+        exit;
+    }
+} else {
+    exit;
+}
 
 //get the customers
 $dbHandler = DatabaseHandler::getInstance();
@@ -24,7 +33,7 @@ while($row = $data->fetch_assoc())
     echo "<td>" .$row['last_name']. "</td>";
     echo "<td>" .$row['mail_address']. "</td>";
     echo "<td>" .$row['registration_date']. "</td>";
-    echo 
+    echo
     "<td>
         <form action='../View/TransactionHistoryEmpl.php' method='post'>
             <input type='hidden' name='iban' value=" .$row['id']. " />
@@ -34,16 +43,16 @@ while($row = $data->fetch_assoc())
             <input type='submit' value='View'/>
         </form>
     </td>";
-    echo 
+    echo
     "<td>
         <form action='DownloadHistory.php' method='post'>
-            <input type='hidden' name='iban' value=" .$row['id']. " /> 
+            <input type='hidden' name='iban' value=" .$row['id']. " />
             <input type='submit' value='Export'/>
         </form>
     </td>";
 }
 echo "</table>";
-echo 
+echo
 "<form action='../View/administration.php' method='post'>
     <input type ='submit' value='Back'/>
 </form>"

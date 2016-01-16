@@ -2,7 +2,7 @@
 session_start();
 require_once('../Model/MoneyTransferHandler.php');
 
-if (isset($_POST['type'])) {
+if (isset($_POST['type']) && isset($_SESSION['iban'])) {
     $id = $_SESSION['iban'];
     $uploadFilePath = "/tmp/TransactionBatch_" . $id . ".txt";
     $type = $_POST['type'];

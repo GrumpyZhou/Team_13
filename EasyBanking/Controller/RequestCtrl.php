@@ -1,5 +1,14 @@
 <?php
+session_start();
 require_once('../Model/RequestHandler.php');
+
+if (isset($_SESSION['isEmployee'])) {
+    if($_SESSION['isEmployee'] == false) {
+        exit;
+    }
+} else {
+    exit;
+}
 
 if (isset($_POST['reqtype'])) {
     $reqtype = $_POST['reqtype'];
