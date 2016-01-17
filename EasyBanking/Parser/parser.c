@@ -59,7 +59,7 @@ int maxBatchArgSize[] = { ID_SIZE_MAX, AMOUNT_SIZE_MAX, DESC_BUFFER_SIZE };
 
 void usage(char **argv);
 struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const char* tan_id, const char* tan, const char* fileName);
-bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked);
+bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked, bool batchArgument);
 bool CheckID(MYSQL *conn, const int ID);
 bool ConvertInt(const char* rawInt, int* Int_checked, bool batchArgument);
 bool CheckDBOccurence(MYSQL *conn, const char* query);
@@ -71,6 +71,7 @@ FILE* OpenFile(const char* filePath);
 bool ProcessTransaction(MYSQL* conn, struct BatchTransaction* transaction, const char* line, int sender_id);
 bool ParseRawBatchFile(const char* lineBuffer, struct BatchArguments *args);
 bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const char* lineStart, int maxSize);
+bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struct BatchTransaction* transaction, int sender_id);
 
 //returns the string position and size of the description
 struct Description ParseDescription(char* amountPos)
@@ -247,7 +248,7 @@ void usage(char **argv)
 struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const char* tan_id, const char* tan, const char* fileName)
 {
     struct CmdArguments args;
-    if(!ConvertID(conn, sender, &args.sender_id))
+    if(!ConvertID(conn, sender, &args.sender_id, false))
     {
         printf("Sender id incorrect. Exit\n");
         exit(EXIT_FAILURE);
@@ -278,10 +279,10 @@ struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const cha
     return args;
 }
 
-bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked)
+bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked, bool batchArgument)
 {
     int ID;
-    if(!ConvertInt(ID_Raw, &ID, false))
+    if(!ConvertInt(ID_Raw, &ID, batchArgument))
     {
         printf("Unable to convert user ID\n");
         return false;
@@ -309,15 +310,18 @@ bool ConvertInt(const char* rawInt, int* Int_checked, bool batchArgument)
         printf("Conversion error %s\n", strerror(errno));
         return false;
     }
-    else if (*end || batchArgument && *end != batchSeperation.end) {
-        printf("Partially converted %ld, non converted %s\n", result, end);
-        return false;
+    else if (*end) {
+        if(batchArgument && *end == batchSeperation.end)
+        {}
+        else
+        {
+            printf("%d Partially converted %ld, non converted %s\n", batchArgument,result, end);
+            return false;
+        }
     }
-    else
-    {
-        *Int_checked = (int)result;
-        return true;
-    }
+
+    *Int_checked = (int)result;
+    return true;
 }
 
 bool CheckID(MYSQL *conn, const int ID)
@@ -422,6 +426,23 @@ bool ProcessTransaction(MYSQL* conn, struct BatchTransaction* transaction, const
         return false;
     }
 
+    if(!CheckBatchArguments(conn, argPositions, transaction, sender_id))
+    {
+        printf("Not all batch arguments were correct\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struct BatchTransaction* transaction, int sender_id)
+{
+    if(!ConvertID(conn, argPositions[0].start, &transaction->receiver_id, true))
+    {
+        printf("receiver id incorrect\n");
+        return false;
+    }
+
     return true;
 }
 
@@ -481,4 +502,5 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
 
     return true;
 }
+
 
