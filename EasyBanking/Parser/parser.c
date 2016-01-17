@@ -34,6 +34,9 @@ struct Pair
     char start;
     char end;
 };
+
+#define NUM_CHAR_RANGES 3
+struct Pair allowedCharRange[] = { (struct Pair) { 48, 57 }, (struct Pair) { 65, 90 }, (struct Pair) { 97, 122 } };
 struct Pair batchSeperation = (struct Pair) { '<', '>' };
 
 void usage(char **argv);
@@ -42,6 +45,8 @@ bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked);
 bool CheckID(MYSQL *conn, const int ID);
 bool ConvertInt(const char* rawInt, int* Int_checked, bool batchArgument);
 bool CheckDBOccurence(MYSQL *conn, const char* query);
+bool CheckTAN(const char* rawTan);
+bool CheckAllowedChar(const char c, const bool description);
 
 //returns the string position and size of the description
 struct Description ParseDescription(char* amountPos)
@@ -214,14 +219,24 @@ struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const cha
 
     if(ConvertInt(tan_id, &args.tan_id, false)) {
         if (args.tan_id < 0 || args.tan_id > MAX_TANS) {
-            printf("Incorrect tan id. Exit");
+            printf("Incorrect tan id. Exit\n");
             exit(EXIT_FAILURE);
         }
     }
     else
     {
-        printf("Unable to parse tan_id. Exit");
+        printf("Unable to parse tan_id. Exit\n");
         exit(EXIT_FAILURE);
+    }
+
+    if (!CheckTAN(tan))
+    {
+        printf("Incorrect tan format. Exit\n");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        strncpy(args.tan, tan, TAN_SIZE);
     }
 
     return args;
@@ -306,5 +321,44 @@ bool CheckDBOccurence(MYSQL *conn, const char* query)
     mysql_free_result(res);
 
     return true;
+}
+
+bool CheckTAN(const char* rawTan)
+{
+    int pos = 0;
+    while (rawTan[pos] != '\0')
+    {
+        if (pos >= TAN_SIZE - 1)
+        {
+            printf("TAN too big\n");
+            return false;
+        }
+        if (!CheckAllowedChar(rawTan[pos], false))
+        {
+            printf("Invalid char in TAN\n");
+            return false;
+        }
+        pos++;
+    }
+    if (pos < TAN_SIZE - 1)
+    {
+        printf("TAN too short\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool CheckAllowedChar(const char c, const bool description)
+{
+    int i;
+    for (i = 0; i < NUM_CHAR_RANGES; ++i)
+    {
+        if (c >= allowedCharRange[i].start && c <= allowedCharRange[i].end)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
