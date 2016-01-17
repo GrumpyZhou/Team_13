@@ -40,12 +40,6 @@ struct BatchTransaction
     char description[DESC_BUFFER_SIZE];
 };
 
-struct Description
-{
-    char* startPos;
-    int size;
-};
-
 struct Pair
 {
     char start;
@@ -74,31 +68,12 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
 bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struct BatchTransaction* transaction, int sender_id);
 bool ConvertFloat(const char* rawFloat, float* float_Checked, bool batchArgument);
 bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount);
-
-//returns the string position and size of the description
-struct Description ParseDescription(char* amountPos)
-{
-    struct Description result;
-    char* currPos;
-    for(currPos = amountPos; currPos - amountPos < DESC_BUFFER_SIZE && *currPos != ' '; currPos += 1);
-    result.startPos = currPos + 1;
-    for(currPos = result.startPos; *currPos != '\0'; currPos += 1);
-    result.size = currPos - result.startPos - 1;
-    if(result.size > DESC_BUFFER_SIZE)
-    {
-        exit(1);
-    }
-    return result;
-}
+bool CheckDescription(struct BatchArguments raw);
 
 int main(int argc, char **argv) {
     //Format: <receiver_id> <amount>
-    int receiver_id, first_space_location = 0;
-    double amount;
     FILE *batch_file;
     char line_buffer[BUFFER_SIZE];
-    char *amount_position;
-    char *tan_position;
 
     if(argc != 5)
     {
@@ -142,21 +117,15 @@ int main(int argc, char **argv) {
             printf("Too many transactions. Please use another file. Exit\n");
             break;
         }
+        transaction.amount = -1.0f;
 
         if(!ProcessTransaction(conn, &transaction, line_buffer, checkedArgs.sender_id))
         {
             printf("Failed processing the transfer %d\n", transactionCount + 1);
-            //continue;
+            continue;
         }
 
-        receiver_id = atoi(line_buffer);
-
-        for(first_space_location = 0; first_space_location < BUFFER_SIZE && line_buffer[first_space_location] != ' '; first_space_location += 1);
-        //+1 to jump over space
-        amount_position = line_buffer + first_space_location + 1;
-        amount = atof(amount_position);
-
-        if (amount <= 0)
+        if (transaction.amount <= 0)
         {
             fprintf(stderr, "Negative or an amount of zero is not allowed!\n");
             exit(EXIT_FAILURE);
@@ -166,7 +135,7 @@ int main(int argc, char **argv) {
 
         //1. recipient exists? 2. confirmation required? 3. add transaction 4. if no confirmation: change balances
 
-         sprintf(sql_command, "SELECT * FROM users WHERE id = '%d'", receiver_id);
+         sprintf(sql_command, "SELECT * FROM users WHERE id = '%d'", transaction.receiver_id);
          if (mysql_query(conn, sql_command)) {
              fprintf(stderr, "%s\n", mysql_error(conn));
              exit(1);
@@ -183,7 +152,7 @@ int main(int argc, char **argv) {
          mysql_free_result(res);
 
 
-         sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", checkedArgs.sender_id, amount);
+         sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", checkedArgs.sender_id, transaction.amount);
          if (mysql_query(conn, sql_command)) {
              fprintf(stderr, "%s\n", mysql_error(conn));
              exit(1);
@@ -199,15 +168,14 @@ int main(int argc, char **argv) {
          }
          mysql_free_result(res);
 
-         //get the description
-        struct Description desc = ParseDescription(amount_position);
-        if (amount <= 10000)
+
+        if (transaction.amount <= 10000)
         {
-            sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '1', '%.*s')", checkedArgs.sender_id, receiver_id, amount, desc.size, desc.startPos);
+            sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '1', '%s')", checkedArgs.sender_id, transaction.receiver_id, transaction.amount, transaction.description);
         }
         else
         {
-            sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '0', '%.*s')", checkedArgs.sender_id, receiver_id, amount, desc.size, desc.startPos);
+            sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '0', '%s')", checkedArgs.sender_id, transaction.receiver_id, transaction.amount, transaction.description);
         }
         if (mysql_query(conn, sql_command)) {
             fprintf(stderr, "%s\n", mysql_error(conn));
@@ -215,16 +183,16 @@ int main(int argc, char **argv) {
         }
 
 
-        if(amount <= 10000)
+        if(transaction.amount <= 10000)
         {
-            sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", amount, checkedArgs.sender_id);
+            sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", transaction.amount, checkedArgs.sender_id);
             if (mysql_query(conn, sql_command)) {
                 fprintf(stderr, "%s\n", mysql_error(conn));
                 exit(1);
             }
 
 
-            sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = '%d'", amount, receiver_id);
+            sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = '%d'", transaction.amount, transaction.receiver_id);
             if (mysql_query(conn, sql_command)) {
                 fprintf(stderr, "%s\n", mysql_error(conn));
                 exit(1);
@@ -466,6 +434,18 @@ bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struc
     {
         return false;
     }
+    
+    if (!CheckDescription(argPositions[2]))
+    {
+        printf("Error in description\n");
+        return false;
+    }
+    else
+    {
+        int length = argPositions[2].end - argPositions[2].start;
+        strncpy(transaction->description, argPositions[2].start, length);
+        transaction->description[length] = '\0';
+    }
 
     return true;
 }
@@ -478,8 +458,14 @@ bool ParseRawBatchFile(const char* lineBuffer, struct BatchArguments *args)
     {
         if (!FindBatchArgument(&args[i], currPos, lineBuffer, maxBatchArgSize[i]))
         {
+            args[i].start = NULL;
+            args[i].end = NULL;
             printf("Error finding transaction argument %d\n", i + 1);
             return false;
+        }
+        else
+        {
+            printf("Processed argument %d\n", i+1);
         }
         currPos = args[i].end + 1;
     }
@@ -491,9 +477,21 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
     char* currPos = argStart;
     args->start = NULL;
     args->end = NULL;
+    printf("%d %d %d\n", (int)currPos, (int)args->start, (int)args->end);
+    printf("%s\n", currPos);
 
     while (currPos - lineStart < BUFFER_SIZE)
     {
+        if(*currPos == '\n' || *currPos == '\0')
+        {
+            printf("Reached end of line\n");
+            return false;
+        }
+        if(currPos - lineStart == BUFFER_SIZE -1)
+        {
+            printf("Reached maximum of line\n");
+            return false;
+        }
         if (*currPos == batchSeperation.start)
         {
             args->start = currPos + 1;
@@ -523,7 +521,8 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
         printf("Argument has wrong size %d\n", size);
         return false;
     }
-
+    
+    printf("%d %d\n", (int)args->start, (int)args->end);
     return true;
 }
 
@@ -560,6 +559,25 @@ bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount)
     {
         printf("Sender balance not sufficient.\n");
         return false;
+    }
+
+    return true;
+}
+
+bool CheckDescription(struct BatchArguments raw)
+{
+    char* currPos;
+    for (currPos = raw.start; currPos < raw.end; ++currPos)
+    {
+        if(*currPos == '\0')
+        {
+            break;
+        }
+        if (!CheckAllowedChar(*currPos, true))
+        {
+            printf("Not allowed description character transform to whitespace\n");
+            *currPos = ' ';
+        }
     }
 
     return true;
