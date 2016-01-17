@@ -72,6 +72,8 @@ bool ProcessTransaction(MYSQL* conn, struct BatchTransaction* transaction, const
 bool ParseRawBatchFile(const char* lineBuffer, struct BatchArguments *args);
 bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const char* lineStart, int maxSize);
 bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struct BatchTransaction* transaction, int sender_id);
+bool ConvertFloat(const char* rawFloat, float* float_Checked, bool batchArgument);
+bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount);
 
 //returns the string position and size of the description
 struct Description ParseDescription(char* amountPos)
@@ -442,6 +444,28 @@ bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struc
         printf("receiver id incorrect\n");
         return false;
     }
+    if(transaction->receiver_id == sender_id)
+    {
+        printf("Sender and receiver are the same\n");
+        return false;
+    }
+
+    if(ConvertFloat(argPositions[1].start, &transaction->amount, true)) {
+        if (transaction->amount <= 0.0f) {
+            printf("Amount incorrect\n");
+            return false;
+        }
+    }
+    else
+    {
+        printf("Failed to convert amount to float\n");
+        return false;
+    }
+
+    if(!CheckSenderBalance(conn, sender_id, transaction->amount))
+    {
+        return false;
+    }
 
     return true;
 }
@@ -503,4 +527,41 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
     return true;
 }
 
+bool ConvertFloat(const char* rawFloat, float* float_Checked, bool batchArgument)
+{
+    errno = 0;
+    char* end = 0;
+    double result = strtod(rawFloat, &end);
+
+    if (errno != 0)
+    {
+        printf("Conversion error %s\n", strerror(errno));
+        return false;
+    }
+    else if (*end)
+    {
+        if(batchArgument && *end == batchSeperation.end)
+        {}
+        else
+        {
+            printf("Partially converted %f, non converted %s\n", result, end);
+            return false;
+        }
+    }
+    *float_Checked = (float)result;
+    return true;
+}
+
+bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount)
+{
+    char sql_command[1024];
+    sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", sender_id, amount);
+    if (!CheckDBOccurence(conn, sql_command))
+    {
+        printf("Sender balance not sufficient.\n");
+        return false;
+    }
+
+    return true;
+}
 
