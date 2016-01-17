@@ -40,7 +40,7 @@ void usage(char **argv);
 struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const char* tan_id, const char* tan, const char* fileName);
 bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked);
 bool CheckID(MYSQL *conn, const int ID);
-bool ConvertInt(const char* rawInt, int* Int_checked);
+bool ConvertInt(const char* rawInt, int* Int_checked, bool batchArgument);
 bool CheckDBOccurence(MYSQL *conn, const char* query);
 
 //returns the string position and size of the description
@@ -212,13 +212,25 @@ struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const cha
         exit(EXIT_FAILURE);
     }
 
+    if(ConvertInt(tan_id, &args.tan_id, false)) {
+        if (args.tan_id < 0 || args.tan_id > MAX_TANS) {
+            printf("Incorrect tan id. Exit");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else
+    {
+        printf("Unable to parse tan_id. Exit");
+        exit(EXIT_FAILURE);
+    }
+
     return args;
 }
 
 bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked)
 {
     int ID;
-    if(!ConvertInt(ID_Raw, &ID))
+    if(!ConvertInt(ID_Raw, &ID, false))
     {
         printf("Unable to convert user ID\n");
         return false;
@@ -235,7 +247,7 @@ bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked)
     }
 }
 
-bool ConvertInt(const char* rawInt, int* Int_checked)
+bool ConvertInt(const char* rawInt, int* Int_checked, bool batchArgument)
 {
     errno = 0;
     char* end = 0;
@@ -246,7 +258,7 @@ bool ConvertInt(const char* rawInt, int* Int_checked)
         printf("Conversion error %s\n", strerror(errno));
         return false;
     }
-    else if (*end && *end != batchSeperation.end) {
+    else if (*end || batchArgument && *end != batchSeperation.end) {
         printf("Partially converted %ld, non converted %s\n", result, end);
         return false;
     }
