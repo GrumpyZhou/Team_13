@@ -48,6 +48,8 @@ bool CheckDBOccurence(MYSQL *conn, const char* query);
 bool CheckTAN(const char* rawTan);
 bool CheckAllowedChar(const char c, const bool description);
 
+FILE* OpenFile(const char* filePath);
+
 //returns the string position and size of the description
 struct Description ParseDescription(char* amountPos)
 {
@@ -66,9 +68,8 @@ struct Description ParseDescription(char* amountPos)
 
 int main(int argc, char **argv) {
     //Format: <receiver_id> <amount>
-    int tan_id, receiver_id, first_space_location = 0;
+    int receiver_id, first_space_location = 0;
     double amount;
-    char tan[TAN_SIZE];
     FILE *batch_file;
     char line_buffer[BUFFER_SIZE];
     char *amount_position;
@@ -85,10 +86,6 @@ int main(int argc, char **argv) {
         printf("Batch file could not be opened. Exit.");
         exit(EXIT_FAILURE);
     }
-
-    memcpy(tan, argv[3], 15);
-    tan[15] = '\0';
-    tan_id = atoi(argv[2]);
 
     MYSQL *conn;
     MYSQL_RES *res;
@@ -107,6 +104,8 @@ int main(int argc, char **argv) {
     }
 
     struct CmdArguments checkedArgs = ParseCmdArguments(conn, argv[1], argv[2], argv[3], argv[4]);
+
+    batch_file = OpenFile(argv[4]);
 
     while(fgets(line_buffer, sizeof(line_buffer), batch_file) != NULL)
     {
@@ -360,5 +359,19 @@ bool CheckAllowedChar(const char c, const bool description)
         }
     }
     return false;
+}
+
+FILE* OpenFile(const char* filePath)
+{
+    FILE* file = fopen(filePath, "r");
+    if (file == NULL)
+    {
+        printf("Batch file could not be opened. Exit.\n");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        return file;
+    }
 }
 
