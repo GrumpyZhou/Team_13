@@ -9,8 +9,12 @@
 #define EXIT_FAILURE 1
 #define BUFFER_SIZE 150
 #define DESC_BUFFER_SIZE 100
+#define ID_SIZE_MAX 10
+#define AMOUNT_SIZE_MAX 24
 #define TAN_SIZE 16
 #define MAX_TANS 99
+#define MAX_TRANSFERS 100
+#define NUM_BATCH_ARGS 3
 #define MYSQL_SERVER_ADDRESS "localhost"
 #define MYSQL_USER "root"
 #define MYSQL_PW "?team13!"
@@ -21,6 +25,19 @@ struct CmdArguments
     int sender_id;
     int tan_id;
     char tan[TAN_SIZE];
+};
+
+struct BatchArguments
+{
+    char* start;
+    char* end;
+};
+
+struct BatchTransaction
+{
+    int receiver_id;
+    float amount;
+    char description[DESC_BUFFER_SIZE];
 };
 
 struct Description
@@ -38,6 +55,7 @@ struct Pair
 #define NUM_CHAR_RANGES 3
 struct Pair allowedCharRange[] = { (struct Pair) { 48, 57 }, (struct Pair) { 65, 90 }, (struct Pair) { 97, 122 } };
 struct Pair batchSeperation = (struct Pair) { '<', '>' };
+int maxBatchArgSize[] = { ID_SIZE_MAX, AMOUNT_SIZE_MAX, DESC_BUFFER_SIZE };
 
 void usage(char **argv);
 struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const char* tan_id, const char* tan, const char* fileName);
@@ -49,6 +67,10 @@ bool CheckTAN(const char* rawTan);
 bool CheckAllowedChar(const char c, const bool description);
 
 FILE* OpenFile(const char* filePath);
+
+bool ProcessTransaction(MYSQL* conn, struct BatchTransaction* transaction, const char* line, int sender_id);
+bool ParseRawBatchFile(const char* lineBuffer, struct BatchArguments *args);
+bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const char* lineStart, int maxSize);
 
 //returns the string position and size of the description
 struct Description ParseDescription(char* amountPos)
@@ -107,8 +129,23 @@ int main(int argc, char **argv) {
 
     batch_file = OpenFile(argv[4]);
 
+    struct BatchTransaction transaction;
+    int transactionCount = -1;
     while(fgets(line_buffer, sizeof(line_buffer), batch_file) != NULL)
     {
+        transactionCount++;
+        if(transactionCount > MAX_TRANSFERS)
+        {
+            printf("Too many transactions. Please use another file. Exit\n");
+            break;
+        }
+
+        if(!ProcessTransaction(conn, &transaction, line_buffer, checkedArgs.sender_id))
+        {
+            printf("Failed processing the transfer %d\n", transactionCount + 1);
+            //continue;
+        }
+
         receiver_id = atoi(line_buffer);
 
         for(first_space_location = 0; first_space_location < BUFFER_SIZE && line_buffer[first_space_location] != ' '; first_space_location += 1);
@@ -366,12 +403,82 @@ FILE* OpenFile(const char* filePath)
     FILE* file = fopen(filePath, "r");
     if (file == NULL)
     {
-        printf("Batch file could not be opened. Exit.\n");
+        printf("Batch file could not be opened. Exit.");
         exit(EXIT_FAILURE);
     }
     else
     {
         return file;
     }
+}
+
+bool ProcessTransaction(MYSQL* conn, struct BatchTransaction* transaction, const char* line, int sender_id)
+{
+    struct BatchArguments argPositions[NUM_BATCH_ARGS];
+
+    if(!ParseRawBatchFile(line, argPositions))
+    {
+        printf("Failed finding the batch file elements\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool ParseRawBatchFile(const char* lineBuffer, struct BatchArguments *args)
+{
+    char* currPos = lineBuffer;
+    int i;
+    for (i = 0; i < NUM_BATCH_ARGS; ++i)
+    {
+        if (!FindBatchArgument(&args[i], currPos, lineBuffer, maxBatchArgSize[i]))
+        {
+            printf("Error finding transaction argument %d\n", i + 1);
+            return false;
+        }
+        currPos = args[i].end + 1;
+    }
+    return true;
+}
+
+bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const char* lineStart, int maxSize)
+{
+    char* currPos = argStart;
+    args->start = NULL;
+    args->end = NULL;
+
+    while (currPos - lineStart < BUFFER_SIZE)
+    {
+        if (*currPos == batchSeperation.start)
+        {
+            args->start = currPos + 1;
+        }
+
+        if (*currPos == batchSeperation.end)
+        {
+            if (args->start == NULL)
+            {
+                printf("No argument start found\n");
+                return false;
+            }
+            args->end = currPos;
+            break;
+        }
+        currPos++;
+    }
+
+    if (args->start == NULL || args->end == NULL)
+    {
+        printf("Failed to find argument\n");
+        return false;
+    }
+    int size = args->end - args->start;
+    if (size > maxSize || size <= 0)
+    {
+        printf("Argument has wrong size %d\n", size);
+        return false;
+    }
+
+    return true;
 }
 
