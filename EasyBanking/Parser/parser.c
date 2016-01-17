@@ -70,8 +70,9 @@ bool ConvertFloat(const char* rawFloat, float* float_Checked, bool batchArgument
 bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount);
 bool CheckDescription(struct BatchArguments raw);
 
+bool PerformTransaction(MYSQL* conn, struct BatchTransaction* transaction, int sender_id);
+
 int main(int argc, char **argv) {
-    //Format: <receiver_id> <amount>
     FILE *batch_file;
     char line_buffer[BUFFER_SIZE];
 
@@ -80,17 +81,7 @@ int main(int argc, char **argv) {
         usage(argv);
     }
 
-    batch_file = fopen (argv[4],"r");
-    if (batch_file == NULL)
-    {
-        printf("Batch file could not be opened. Exit.");
-        exit(EXIT_FAILURE);
-    }
-
     MYSQL *conn;
-    MYSQL_RES *res;
-    MYSQL_ROW row;
-    char sql_command[1024];
     char *server = MYSQL_SERVER_ADDRESS;
     char *user = MYSQL_USER;
     char *password = MYSQL_PW;
@@ -121,85 +112,17 @@ int main(int argc, char **argv) {
 
         if(!ProcessTransaction(conn, &transaction, line_buffer, checkedArgs.sender_id))
         {
-            printf("Failed processing the transfer %d\n", transactionCount + 1);
+            printf("Failed processing the transaction %d\n", transactionCount + 1);
             continue;
         }
-
-        if (transaction.amount <= 0)
+     
+        if(!PerformTransaction(conn, &transaction, checkedArgs.sender_id))
         {
-            fprintf(stderr, "Negative or an amount of zero is not allowed!\n");
-            exit(EXIT_FAILURE);
+            printf("Failed performing the transaction %d\n", transactionCount);
+            continue;
         }
-
-        //printf("Current line: %d - %f\n", receiver_id, amount);
-
-        //1. recipient exists? 2. confirmation required? 3. add transaction 4. if no confirmation: change balances
-
-         sprintf(sql_command, "SELECT * FROM users WHERE id = '%d'", transaction.receiver_id);
-         if (mysql_query(conn, sql_command)) {
-             fprintf(stderr, "%s\n", mysql_error(conn));
-             exit(1);
-         }
-         res = mysql_use_result(conn);
-
-
-         if ((row = mysql_fetch_row(res)) == NULL)
-         {
-             printf("Recipient does not exist! Exit.");
-             mysql_close(conn);
-             exit(EXIT_FAILURE);
-         }
-         mysql_free_result(res);
-
-
-         sprintf(sql_command, "SELECT * FROM accounts WHERE user_id = '%d' AND balance > '%f'", checkedArgs.sender_id, transaction.amount);
-         if (mysql_query(conn, sql_command)) {
-             fprintf(stderr, "%s\n", mysql_error(conn));
-             exit(1);
-         }
-         res = mysql_use_result(conn);
-
-
-         if ((row = mysql_fetch_row(res)) == NULL)
-         {
-             printf("Balance not sufficient! Exit.");
-             mysql_close(conn);
-             exit(EXIT_FAILURE);
-         }
-         mysql_free_result(res);
-
-
-        if (transaction.amount <= 10000)
-        {
-            sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '1', '%s')", checkedArgs.sender_id, transaction.receiver_id, transaction.amount, transaction.description);
-        }
-        else
-        {
-            sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '0', '%s')", checkedArgs.sender_id, transaction.receiver_id, transaction.amount, transaction.description);
-        }
-        if (mysql_query(conn, sql_command)) {
-            fprintf(stderr, "%s\n", mysql_error(conn));
-            exit(1);
-        }
-
-
-        if(transaction.amount <= 10000)
-        {
-            sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", transaction.amount, checkedArgs.sender_id);
-            if (mysql_query(conn, sql_command)) {
-                fprintf(stderr, "%s\n", mysql_error(conn));
-                exit(1);
-            }
-
-
-            sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = '%d'", transaction.amount, transaction.receiver_id);
-            if (mysql_query(conn, sql_command)) {
-                fprintf(stderr, "%s\n", mysql_error(conn));
-                exit(1);
-            }
-
-        }
-
+        
+        printf("Transaction %d performed\n", transactionCount);
     }
 
     mysql_close(conn);
@@ -463,10 +386,6 @@ bool ParseRawBatchFile(const char* lineBuffer, struct BatchArguments *args)
             printf("Error finding transaction argument %d\n", i + 1);
             return false;
         }
-        else
-        {
-            printf("Processed argument %d\n", i+1);
-        }
         currPos = args[i].end + 1;
     }
     return true;
@@ -477,8 +396,6 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
     char* currPos = argStart;
     args->start = NULL;
     args->end = NULL;
-    printf("%d %d %d\n", (int)currPos, (int)args->start, (int)args->end);
-    printf("%s\n", currPos);
 
     while (currPos - lineStart < BUFFER_SIZE)
     {
@@ -522,7 +439,6 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
         return false;
     }
     
-    printf("%d %d\n", (int)args->start, (int)args->end);
     return true;
 }
 
@@ -577,6 +493,39 @@ bool CheckDescription(struct BatchArguments raw)
         {
             printf("Not allowed description character transform to whitespace\n");
             *currPos = ' ';
+        }
+    }
+
+    return true;
+}
+
+bool PerformTransaction(MYSQL* conn, struct BatchTransaction* transaction, int sender_id)
+{
+    char sql_command[1024];
+    int approved = 0;
+    if (transaction->amount <= 10000) {
+        approved = 1;
+    }
+    sprintf(sql_command, "INSERT INTO transactions (sender_id, receiver_id, amount, approved, description) VALUES ('%d', '%d', '%f', '%d', '%s')", sender_id, transaction->receiver_id, transaction->amount, approved, transaction->description);
+    if (mysql_query(conn, sql_command)) {
+        printf("Failed adding transaction to db\n");
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        return false;
+    }
+
+    if(transaction->amount <= 10000)
+    {
+        sprintf(sql_command, "UPDATE accounts SET balance = balance - %f WHERE user_id = '%d'", transaction->amount, sender_id);
+        if (mysql_query(conn, sql_command)) {
+            printf("Failed updating sender balance\n");
+            fprintf(stderr, "%s\n", mysql_error(conn));
+            return false;
+        }
+        sprintf(sql_command, "UPDATE accounts SET balance = balance + %f WHERE user_id = '%d'", transaction->amount, transaction->receiver_id);
+        if (mysql_query(conn, sql_command)) {
+            printf("Failed updating receiver balance\n");
+            fprintf(stderr, "%s\n", mysql_error(conn));
+            return false;
         }
     }
 
