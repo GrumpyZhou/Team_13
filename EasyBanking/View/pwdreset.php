@@ -32,8 +32,9 @@ if (!isset($_SESSION['resetpwd_user'])){
     <div class="widw">
         <div class="titbg"><span>Reset Password</span></div>
         <form class="pwdrec" action="../Controller/PwdRecoveryCtrl.php" method="post">
-            <label id="llong">New Password</label> <input class='pwdinput' type="password" name="newpwd"  pattern=".{6,}"
-                                                          title="The password should be least 6 characters"  required/>
+            <label id="llong">New Password</label>
+            <input class='pwdinput' type="password" name="newpwd"  pattern="(?=(.*[0-9]))(?=(.*[a-z]))(?=(.*[A-Z])).{8,}"
+                   title="Your password should be at least 6 characters and contains 1 number, 1 lowercase and 1 uppercase" required/>
             <input id='pwdbtn'class="barbtn" type="submit" value="Confirm"/>
             <input type="hidden" name="uid" value="<? echo $id; ?>"/>
         </form>

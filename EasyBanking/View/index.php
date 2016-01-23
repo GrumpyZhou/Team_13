@@ -50,8 +50,8 @@
                 </tr>
                 <tr>
                     <td><input type="email" name="email" required/></td>
-                    <td><input type="password" name="password" pattern=".{6,}"
-                               title="The password should be least 6 characters" required/></td>
+                    <td><input type="password" name="password" pattern="(?=(.*[0-9]))(?=(.*[a-z]))(?=(.*[A-Z])).{8,}"
+                               title="Your password should be at least 6 characters and contains 1 number, 1 lowercase and 1 uppercase" required/></td>
                 </tr>
                 <tr>
                     <td>Are you an employee?</td>
