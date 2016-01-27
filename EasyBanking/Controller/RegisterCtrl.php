@@ -15,14 +15,14 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     if (isset($_POST['tan_method']) and $_POST['tan_method'] == 'SCS')
     {
          $usesSCS = true;
-    } 
+    }
 
     $result = Account::register($email, $firstName, $lastName, $password, $isEmployee, $usesSCS);
     if (is_string($result)) {
 
         echo $result;
     } else {
-        echo "You have registered successfully!";
+        echo "You have registered successfully!<br>";
         echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
     }
 }else{
