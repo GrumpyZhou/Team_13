@@ -6,13 +6,12 @@ require_once('../Model/PWDSecHandler.php');
 
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
-    
     $email = htmlentities( strip_tags ($_POST['email']));
     $password = htmlentities( strip_tags ($_POST['password']));
     $isLocked = PWDSecHandler::isLocked($email);
 
     if ($isLocked === NULL) {
-        echo 'Invalid email address';
+        echo 'Invalid E-Mail Address or Password.';
         echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
     } else {
         if (is_string($isLocked)) {
@@ -22,9 +21,9 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
         } else {
             $user = Account::login($email, $password);
             if (is_string($user)) {
-                echo "Error message: " . $user . '<br>';
-                echo PWDSecHandler::incFailedAtmp($email) . '<br>';
+                echo 'Invalid E-Mail Address or Password.';
                 echo "<a href='../View/index.php'>Click here to go back to the HomePage</a>";
+                PWDSecHandler::incFailedAtmp($email);
             } else {
                 PWDSecHandler::clearLock($email);
                 $_SESSION['email'] = $user->email;
