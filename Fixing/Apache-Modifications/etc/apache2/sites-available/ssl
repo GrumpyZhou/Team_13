@@ -11,7 +11,7 @@
     <Directory /var/www>
 	Order allow,deny
 	deny from all
-	Options None
+	Options FollowSymLinks
 	AllowOverride None
     </Directory>
     <Directory /var/www/View>
