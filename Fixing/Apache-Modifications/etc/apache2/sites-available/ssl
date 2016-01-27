@@ -2,19 +2,20 @@
     SSLEngine on
     SSLCertificateFile /etc/ssl/certs/easy.crt
     SSLCertificateKeyFile /etc/ssl/keys/easyBank.pem
-    
+    SSLProtocol all -SSLv2 -SSLv3
+
     # Pfad zu den Webinhalten
     DocumentRoot /var/www
     ErrorDocument 404 /custom_404.html
     ErrorDocument 403 /custom_403.html
     <Directory /var/www>
-     	Order allow,deny
-  	deny from all
-  	Options None
-  	AllowOverride None
+	Order allow,deny
+	deny from all
+	Options None
+	AllowOverride None
     </Directory>
     <Directory /var/www/View>
-   	allow from all
+	allow from all
     </Directory>
     Header always append X-Frame-Options DENY
 </VirtualHost>
