@@ -36,7 +36,6 @@ class PWDSecHandler
         $res = $dbHandler->execQuery($query);
         $row = $res->fetch_assoc();
         if ($row == NULL) {
-            echo "Wrong User email address.";
             return false;
         } else {
             $id = $row['id'];
@@ -108,7 +107,6 @@ class PWDSecHandler
         $res = $dbHandler->execQuery($query);
         $row = $res->fetch_assoc();
         if ($row == NULL) {
-            echo "Wrong User email address.";
             return NULL;
         } else {
             $id = $row['id'];
