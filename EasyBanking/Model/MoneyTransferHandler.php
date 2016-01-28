@@ -51,7 +51,7 @@ class MoneyTransferHandler {
         exec("parseBatchFile $senderId $tanId $tan $filePath", $output, $rc);
         return $rc;
     }
-    
+
     static public function checkTAN($batchFilePath, $senderId, $tan, $tanId)
     {
 
@@ -64,25 +64,25 @@ class MoneyTransferHandler {
 		$res = $dbHandler->execQuery("SELECT * FROM users WHERE id='" . $senderId . "';");
 		$row = $res->fetch_assoc();
 		$usesSCS = $row['uses_scs'];
-		
+
 		if($usesSCS) {
 			$tan_array = explode('+', $tan);
 			$tan_hash = $tan_array[1];
 			$tan_counter = $tan_array[0];
 			//get SCS info
-			
+
 			$res = $dbHandler->execQuery("SELECT * FROM scs WHERE user_id='" . $senderId . "';");
 			$row = $res->fetch_assoc();
 			$pin = $row['pin'];
 			$counter = $row['counter'];
 			$counter += 1;
 			//TAN no longer valid?
-			if ($tan_counter < $counter)
+			/*if ($tan_counter < $counter)
 			{
-				error_log("TAN checking problem: counter invalid.");
+				error_log("TAN checking problem: counter invalid. tan counter " . $tan_counter . " db counter " . $counter);
 				return FALSE;
-			}
-			
+			}*/
+
 			$counter = $tan_counter;
 			$hashedPin = $pin;
 			for($i = 0; $i < $counter; $i++)
@@ -90,9 +90,9 @@ class MoneyTransferHandler {
 				$hashedPin = hash('sha256', $hashedPin);
 				error_log("Hashed PIN in loop: " . $hashedPin);
 			}
-			
+
 			$finalStringToHash = $hashedPin;
-			
+
 			//parse batch file
 			$txt_file    = file_get_contents($batchFilePath);
 			$rows        = explode("\n", $txt_file);
@@ -101,7 +101,7 @@ class MoneyTransferHandler {
 			{
 				//get row data
 				$row_data = explode(' ', $data);
-				$finalStringToHash .= $row_data[0];
+				$finalStringToHash .= substr($row_data[0], 1, -1);
 				//$finalStringToHash .= $row_data[1];
 			}
 			$finalStringToHash .= date("Ymd");
@@ -117,7 +117,7 @@ class MoneyTransferHandler {
 				return FALSE;
 			}
 		}
-		
+
 		else {
 			$res = $dbHandler->execQuery("SELECT * FROM tans WHERE user_id = '" . $senderId . "' AND tan = '" . $tan . "' AND tan_id = '" . $tanId . "' AND used = '0';");
 			if($res->fetch_assoc() == NULL) {
@@ -152,6 +152,7 @@ class MoneyTransferHandler {
 
 
 		$transData = "<" . $receiver . "> <" . $amount . "> <" . $description .">\n";
+
         //create batch file
         if(!self::createTransferBatchFile($filePath, $transData))
         {
