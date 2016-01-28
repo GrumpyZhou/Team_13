@@ -15,6 +15,7 @@
 #define MAX_TANS 99
 #define MAX_TRANSFERS 100
 #define NUM_BATCH_ARGS 3
+#define NUM_CMD_ARGS 5
 #define MYSQL_SERVER_ADDRESS "localhost"
 #define MYSQL_USER "root"
 #define MYSQL_PW "?team13!"
@@ -24,6 +25,7 @@ struct CmdArguments
 {
     int sender_id;
     int tan_id;
+    bool useSCS;
     char tan[TAN_SIZE];
 };
 
@@ -57,7 +59,9 @@ bool ConvertID(MYSQL *conn, const char* ID_Raw, int* ID_checked, bool batchArgum
 bool CheckID(MYSQL *conn, const int ID);
 bool ConvertInt(const char* rawInt, int* Int_checked, bool batchArgument);
 bool CheckDBOccurence(MYSQL *conn, const char* query);
-bool CheckTAN(const char* rawTan);
+bool UseSCS(MYSQL *conn, int sender_id, bool* useSCS);
+bool CheckTANFormat(const char* rawTan);
+bool CheckTAN(MYSQL* conn, struct CmdArguments* args);
 bool CheckAllowedChar(const char c, const bool description);
 
 FILE* OpenFile(const char* filePath);
@@ -76,7 +80,7 @@ int main(int argc, char **argv) {
     FILE *batch_file;
     char line_buffer[BUFFER_SIZE];
 
-    if(argc != 5)
+    if(argc != NUM_CMD_ARGS)
     {
         usage(argv);
     }
@@ -112,7 +116,7 @@ int main(int argc, char **argv) {
 
         if(!ProcessTransaction(conn, &transaction, line_buffer, checkedArgs.sender_id))
         {
-            printf("Failed processing the transaction %d\n", transactionCount + 1);
+            printf("Failed processing the transaction %d\n", transactionCount);
             continue;
         }
      
@@ -134,7 +138,7 @@ int main(int argc, char **argv) {
 
 void usage(char **argv)
 {
-    fprintf(stdout, "usage: %s <sender_id> <tan_id> <tan> <path_to_batch_file>", argv[0]);
+    fprintf(stdout, "usage: %s <sender_id> <tan_id> <tan> <path_to_batch_file> <use_SCS>\n", argv[0]);
     exit(EXIT_FAILURE);
 }
 
@@ -146,27 +150,41 @@ struct CmdArguments ParseCmdArguments(MYSQL* conn, const char* sender, const cha
         printf("Sender id incorrect. Exit\n");
         exit(EXIT_FAILURE);
     }
+    
+    if(!UseSCS(conn, args.sender_id, &args.useSCS))
+    {
+        printf("Failed to find scs info. Exit\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if(!args.useSCS)
+    {
+        if(ConvertInt(tan_id, &args.tan_id, false)) {
+            if (args.tan_id < 0 || args.tan_id > MAX_TANS) {
+                printf("Incorrect tan id. Exit\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        else
+        {
+            printf("Unable to parse tan_id. Exit\n");
+            exit(EXIT_FAILURE);
+        }   
 
-    if(ConvertInt(tan_id, &args.tan_id, false)) {
-        if (args.tan_id < 0 || args.tan_id > MAX_TANS) {
-            printf("Incorrect tan id. Exit\n");
+        if (!CheckTANFormat(tan))
+        {
+            printf("Incorrect tan format. Exit\n");
             exit(EXIT_FAILURE);
         }
-    }
-    else
-    {
-        printf("Unable to parse tan_id. Exit\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (!CheckTAN(tan))
-    {
-        printf("Incorrect tan format. Exit\n");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        strncpy(args.tan, tan, TAN_SIZE);
+        else
+        {
+            strncpy(args.tan, tan, TAN_SIZE);
+        }
+        if(!CheckTAN(conn, &args))
+        {
+            printf("TAN not found in database. Exit\n");
+            exit(EXIT_FAILURE);
+        }
     }
 
     return args;
@@ -256,7 +274,46 @@ bool CheckDBOccurence(MYSQL *conn, const char* query)
     return true;
 }
 
-bool CheckTAN(const char* rawTan)
+bool UseSCS(MYSQL *conn, int sender_id, bool* useSCS)
+{
+    char sql_command[1024];
+    sprintf(sql_command, "SELECT uses_scs FROM users WHERE id = '%d'", sender_id);
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+    if (mysql_query(conn, sql_command)) {
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        return false;
+    }
+    res = mysql_use_result(conn);
+
+    if ((row = mysql_fetch_row(res)) == NULL)
+    {
+        printf("Entry does not exist in DB.\n");
+        mysql_free_result(res);
+        return false;
+    }
+    else
+    {
+        int scs = -1;
+        if(!ConvertInt(row[0], &scs, false))
+        {
+            printf("NO scs entry found.\n");
+            mysql_free_result(res);
+            return false;
+        }
+        if(scs == 0)
+            *useSCS = false;
+        else if(scs == 1)
+            *useSCS = true;
+        else
+            return false;
+    }
+    mysql_free_result(res);
+    
+    return true;
+}
+
+bool CheckTANFormat(const char* rawTan)
 {
     int pos = 0;
     while (rawTan[pos] != '\0')
@@ -279,6 +336,17 @@ bool CheckTAN(const char* rawTan)
         return false;
     }
 
+    return true;
+}
+
+bool CheckTAN(MYSQL* conn, struct CmdArguments* args)
+{
+    char sql_command[1024];
+    sprintf(sql_command, "SELECT * FROM tans WHERE tan_Id = '%d' AND user_Id = '%d' AND tan = '%s'", args->tan_id, args->sender_id, args->tan);
+    if (!CheckDBOccurence(conn, sql_command))
+    {
+        return false;
+    }
     return true;
 }
 
@@ -531,4 +599,5 @@ bool PerformTransaction(MYSQL* conn, struct BatchTransaction* transaction, int s
 
     return true;
 }
+
 

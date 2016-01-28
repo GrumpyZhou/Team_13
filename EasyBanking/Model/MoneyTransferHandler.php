@@ -151,8 +151,7 @@ class MoneyTransferHandler {
 		$filePath=mysql_real_escape_string($filePath);
 
 
-		$transData = $receiver . " " . $amount . " " . $description ."\n";
-
+		$transData = "<" . $receiver . "> <" . $amount . "> <" . $description .">\n";
         //create batch file
         if(!self::createTransferBatchFile($filePath, $transData))
         {
