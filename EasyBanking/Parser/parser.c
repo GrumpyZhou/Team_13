@@ -72,7 +72,6 @@ bool FindBatchArgument(struct BatchArguments *args, const char* argStart, const 
 bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struct BatchTransaction* transaction, int sender_id);
 bool ConvertFloat(const char* rawFloat, float* float_Checked, bool batchArgument);
 bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount);
-bool CheckDescription(struct BatchArguments raw);
 
 bool PerformTransaction(MYSQL* conn, struct BatchTransaction* transaction, int sender_id);
 
@@ -138,7 +137,7 @@ int main(int argc, char **argv) {
 
 void usage(char **argv)
 {
-    fprintf(stdout, "usage: %s <sender_id> <tan_id> <tan> <path_to_batch_file> <use_SCS>\n", argv[0]);
+    fprintf(stdout, "usage: %s <sender_id> <tan_id> <tan> <path_to_batch_file>\n", argv[0]);
     exit(EXIT_FAILURE);
 }
 
@@ -426,17 +425,8 @@ bool CheckBatchArguments(MYSQL* conn, struct BatchArguments *argPositions, struc
         return false;
     }
     
-    if (!CheckDescription(argPositions[2]))
-    {
-        printf("Error in description\n");
-        return false;
-    }
-    else
-    {
-        int length = argPositions[2].end - argPositions[2].start;
-        strncpy(transaction->description, argPositions[2].start, length);
-        transaction->description[length] = '\0';
-    }
+    unsigned long length = mysql_real_escape_string(conn, transaction->description, argPositions[2].start, argPositions[2].end - argPositions[2].start); 
+    transaction->description[length] = '\0';
 
     return true;
 }
@@ -543,25 +533,6 @@ bool CheckSenderBalance(MYSQL* conn, int sender_id, float amount)
     {
         printf("Sender balance not sufficient.\n");
         return false;
-    }
-
-    return true;
-}
-
-bool CheckDescription(struct BatchArguments raw)
-{
-    char* currPos;
-    for (currPos = raw.start; currPos < raw.end; ++currPos)
-    {
-        if(*currPos == '\0')
-        {
-            break;
-        }
-        if (!CheckAllowedChar(*currPos, true))
-        {
-            printf("Not allowed description character transform to whitespace\n");
-            *currPos = ' ';
-        }
     }
 
     return true;
