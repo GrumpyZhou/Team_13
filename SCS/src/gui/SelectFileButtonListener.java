@@ -66,6 +66,9 @@ public class SelectFileButtonListener implements ActionListener {
             String str = lines.get(i);
             str = str.trim();
             String[] vals = str.split(" ", -1);
+            for(int j = 0; j < 2; j++) {
+                vals[j] = vals[j].substring(1, vals[j].length()-1);
+            }
             if(str.length() > 150 || !checkBatchLine(vals[0], vals[1])) {
                 mainFrame.displayErrorMessage("Error in batch file line " + (i+1));
                 return false;
